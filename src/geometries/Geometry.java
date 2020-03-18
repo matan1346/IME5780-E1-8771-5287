@@ -1,5 +1,5 @@
 package geometries;
-
+//**LALALA
 import primitives.*;
 //shimon aya po
 public interface Geometry {
