@@ -5,7 +5,7 @@ import primitives.Vector;
 
 public class Sphere extends RadialGeometry {
 
-    Point3D _p;
+    Point3D _center;
 
     public Sphere(Point3D _p, double r)
     {
