@@ -46,13 +46,22 @@ public class Point3D {
         return ZERO;
     }
 
-    public Vector subtract(Point3D p1){
-        return new Vector(p1, this);
+    public Vector subtract(Point3D p1)
+    {
+        Point3D p2 = new Point3D(this.getCoord1().get() - p1.getCoord1().get(),
+                this.getCoord2().get() - p1.getCoord2().get(),
+                this.getCoord3().get() - p1.getCoord3().get());
+
+
+        return new Vector(p1);
+
     }
 
     //לבדוק מה הכוונה
-    public Point3D add(){
-        return new Point3D(0,0,0);
+    public Point3D add(Vector v1){
+        return new Point3D(v1.getHeader().getCoord1().get() + coord1.get(),
+                v1.getHeader().getCoord2().get() + coord2.get(),
+                v1.getHeader().getCoord3().get() + coord3.get());
     }
 
     public double distanceSquared(Point3D p){
