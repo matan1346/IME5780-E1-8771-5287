@@ -20,9 +20,9 @@ public class Triangle extends Polygon {
 
     @Override
     public String toString() {
-        return "Triangle{" +
-                "_vertices=" + _vertices +
-                ", _plane=" + _plane +
-                '}';
+        return "Triangle {\n" +
+                "\tVertices: " + _vertices +
+                ",\n\t" + _plane +
+                "\n}";
     }
 }

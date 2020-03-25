@@ -59,8 +59,15 @@ public class Tube extends RadialGeometry {
 
     @Override
     public String toString() {
-        return "Tube{" +
-                "_axisRay=" + _axisRay +
-                '}';
+        return "Tube {\n" +
+                "\t" + _axisRay +
+                "\n\t" + super.toString() +
+                "\n}";
+
+
+        /*
+        * Tube{_axisRay=Ray{_p=[1.0, 2.0, 3.0], _dir=Vector{_header=[0.2672612419124244, 0.5345224838248488, 0.8017837257372732]}}}
+        *
+        * */
     }
 }

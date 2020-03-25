@@ -70,9 +70,9 @@ public class Ray {
 
     @Override
     public String toString() {
-        return "Ray{" +
-                "_p=" + _p +
-                ", _dir=" + _dir +
-                '}';
+        return "Ray [" +
+                "Point: " + _p +
+                ", Direction " + _dir +
+                "]";
     }
 }

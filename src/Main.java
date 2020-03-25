@@ -1,3 +1,6 @@
+import geometries.Plane;
+import geometries.Triangle;
+import geometries.Tube;
 import primitives.*;
 import static java.lang.System.out;
 import static primitives.Util.*;
@@ -15,7 +18,7 @@ public final class Main {
      * @param args irrelevant here
      */
     public static void main(String[] args) {
-
+        
         try { // test zero vector
             new Vector(0, 0, 0);
             out.println("ERROR: zero vector does not throw an exception");

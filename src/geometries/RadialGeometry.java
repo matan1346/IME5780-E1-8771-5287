@@ -59,8 +59,6 @@ public abstract class RadialGeometry implements Geometry {
 
     @Override
     public String toString() {
-        return "RadialGeometry{" +
-                "_radius=" + _radius +
-                '}';
+        return "Radius: "  + _radius;
     }
 }
