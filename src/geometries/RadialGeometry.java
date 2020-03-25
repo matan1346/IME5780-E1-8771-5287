@@ -2,6 +2,8 @@ package geometries;
 
 import java.util.Objects;
 
+import static primitives.Util.isZero;
+
 /**
  * RadialGeometry abstract class is represents objects with radius
  */
@@ -14,16 +16,19 @@ public abstract class RadialGeometry implements Geometry {
 
     /**
      * Constructor that gets radius value and sets it
-     * @param r
+     * @param r radius value
+     * @throws IllegalArgumentException when radius value is negative
      */
-    public RadialGeometry(double r)
+    public RadialGeometry(double r) throws IllegalArgumentException
     {
+        if(isZero(r) || (r < 0.0))
+            throw new IllegalArgumentException("radius " + r + " is not valid");
         _radius = r;
     }
 
     /**
      * Copy Constructor that gets RadialGeometry object and creates new object
-     * @param rg
+     * @param rg RadialGeometry object
      */
     public RadialGeometry(RadialGeometry rg)
     {

@@ -25,7 +25,7 @@ public class Point3D {
     /**
      * Default point with values (0,0,0)
      */
-    public static Point3D ZERO = new Point3D(0,0,0);
+    public static final Point3D ZERO = new Point3D(0,0,0);
 
     /**
      * Constructor that gets 3 coordinates and sets them
@@ -51,7 +51,7 @@ public class Point3D {
 
     /**
      * Constructor that gets Point and set the coordinates according to that point
-     * @param point3D
+     * @param point3D point object
      */
     public Point3D(Point3D point3D) {
         this(new Coordinate(point3D.coord1), new Coordinate(point3D.coord2), new Coordinate(point3D.coord3));
@@ -141,10 +141,6 @@ public class Point3D {
 
     @Override
     public String toString() {
-        return "[Point3D{]" +
-                "coord1=" + coord1 +
-                ", coord2=" + coord2 +
-                ", coord3=" + coord3 +
-                '}';
+        return "[" + coord1 + ", " + coord2 + ", " + coord3 + "]";
     }
 }
