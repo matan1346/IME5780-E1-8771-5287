@@ -14,7 +14,7 @@ public class PolygonTest {
      * {@link geometries.Polygon#Polygon(primitives.Point3D, primitives.Point3D, primitives.Point3D, primitives.Point3D)}.
      */
     @Test
-    public void testConstructor() {
+    public void constructorTest() {
         // ============ Equivalence Partitions Tests ==============
 
         // TC01: Correct concave quadrangular with vertices in correct order
@@ -76,13 +76,14 @@ public class PolygonTest {
      * Test method for {@link geometries.Polygon#getNormal(primitives.Point3D)}.
      */
     @Test
-    public void testGetNormal() {
+    public void getNormalTest() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: There is a simple single test here
         Polygon pl = new Polygon(new Point3D(0, 0, 1), new Point3D(1, 0, 0), new Point3D(0, 1, 0),
                 new Point3D(-1, 1, 1));
-        double sqrt3 = Math.sqrt(1d / 3);
-        assertEquals("Bad normal to trinagle", new Vector(sqrt3, sqrt3, sqrt3), pl.getNormal(new Point3D(0, 0, 1)));
+        double sqrt3 = -Math.sqrt(1d / 3);
+        assertEquals("Bad normal to polygon",
+                new Vector(sqrt3, sqrt3, sqrt3), pl.getNormal(new Point3D(0, 0, 1)));
     }
 
 }

@@ -28,12 +28,13 @@ public class Sphere extends RadialGeometry {
 
     /**
      * Calculating the normal vector of the Sphere in specific point
-     * @param p1 point object
+     * @param p point object
      * @return new vector that is normal to that sphere
      */
-    public Vector getNormal(Point3D p1)
+    public Vector getNormal(Point3D p)
     {
-        return null;
+        Vector orthogonal = new Vector(p.subtract(_center));
+        return orthogonal.normalized();
     }
 
     @Override

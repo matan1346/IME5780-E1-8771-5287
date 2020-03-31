@@ -1,26 +1,31 @@
 package geometries;
 
 import primitives.Point3D;
+import primitives.Ray;
 import primitives.Vector;
 
 import java.util.Objects;
 
+import static primitives.Util.*;
+
 /**
  * Cylinder class represents the cylinder in 3D  dimension
  */
-public class Cylinder extends RadialGeometry {
+public class Cylinder extends Tube {
     /**
      * the height of the cylinder
      */
     double height;
 
     /**
-     * Constructor that gets an height and radius value and sets them
-     * @param height height value
+     * Constructor that gets a ray, height and radius and sets them
+     * @param _ray axis ray
      * @param r radius value
+     * @param height height value
      */
-    public Cylinder(double height, double r) {
-        super(r);
+    public Cylinder(Ray _ray, double r, double height)
+    {
+        super(_ray, r);
         this.height = height;
     }
 
@@ -34,12 +39,30 @@ public class Cylinder extends RadialGeometry {
 
     /**
      * Calculating the normal vector of the Cylinder in specific point
-     * @param p1 point object
+     * @param p point object
      * @return new vector that is normal to that cylinder
      */
-    public Vector getNormal(Point3D p1)
+    public Vector getNormal(Point3D p)
     {
-        return null;
+        Point3D o = _axisRay.get_p();
+        Vector v = _axisRay.get_dir();
+
+        // projection of P-O on the ray:
+        double t;
+        try {
+            t = alignZero(p.subtract(o).dotProduct(v));
+        } catch (IllegalArgumentException e) { // P = O
+            return v;
+        }
+
+        // if the point is at a base
+        if (t == 0 || isZero(height - t)) // if it's close to 0, we'll get ZERO vector exception
+            return v;
+
+        o = o.add(v.scale(t));
+        return p.subtract(o).normalize();
+
+
     }
 
     @Override

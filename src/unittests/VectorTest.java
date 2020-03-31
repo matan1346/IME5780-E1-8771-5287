@@ -16,7 +16,7 @@ import static primitives.Util.isZero;
 public class VectorTest {
 
     @Test
-    public void testConstructor() {
+    public void constructorTest() {
         // ============ Equivalence Partitions Tests ==============
         //Tc01:
         try { // test zero vector
@@ -39,13 +39,22 @@ public class VectorTest {
     }
 
     @Test
-    public void testAdd() {
+    public void addTest() {
         Vector v1 = new Vector(1,2,3);
         Vector v2 = new Vector(2,3,4);
         Vector v3 = new Vector(-1,-2,-3);
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(new Vector(3, 5, 7), v1.add(v2));
+        assertEquals("add() function [positive+positive] not adding correctly",
+                new Vector(3, 5, 7), v1.add(v2));
+
+        assertEquals("add() function [positive+negative] not adding correctly",
+                new Vector(1, 1, 1), v2.add(v3));
+
+        assertEquals("add() function [negative+negative] not adding correctly",
+                new Vector(-3, -5, -7), v3.add(v2.scale(-1)));
+
+
 
         // =============== Boundary Values Tests ==================
         // test zero vector from add
@@ -56,7 +65,7 @@ public class VectorTest {
     }
 
     @Test
-    public void testSubtract() {
+    public void subtractTest() {
 
         Vector v1 = new Vector(1,2,3);
         Vector v2 = new Vector(1,2,3.5);
@@ -64,7 +73,15 @@ public class VectorTest {
 
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(new Vector(0, 0, 0.5), v1.subtract(v2));
+        assertEquals("subtract() function [positive-positive] not adding correctly",
+                new Vector(0, 0, 0.5), v1.subtract(v2));
+
+        assertEquals("subtract() function [positive-negative] not adding correctly",
+                new Vector(-2, -4, -6.5), v2.subtract(v3.scale(-1)));
+
+        assertEquals("subtract() function [negative-negative] not adding correctly",
+                new Vector(0, 0, -0.5), v3.scale(-1).subtract(v2.scale(-1)));
+
 
         // =============== Boundary Values Tests ==================
         // test zero vector from Subtract
@@ -76,11 +93,12 @@ public class VectorTest {
     }
 
     @Test
-    public void testScale() {
+    public void scaleTest() {
         Vector v1 = new Vector(1,-2,3);
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(new Vector(-1,2,-3), v1.scale(-1));
+        assertEquals("scale() function not working correctly",
+                new Vector(-1,2,-3), v1.scale(-1));
 
         // =============== Boundary Values Tests ==================
         // test zero vector from Scale
@@ -91,21 +109,23 @@ public class VectorTest {
     }
 
     @Test
-    public void testDotProduct() {
+    public void dotProductTest() {
         Vector v1 = new Vector(1,2,3);
         Vector v2 = new Vector(-5,7,-8);
         Vector v3 = new Vector(-16,2,4);// orthogonal for v1
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(-15d , v1.dotProduct(v2), 0.3);
+        assertEquals("dotProduct() function not working correctly",
+                -15d , v1.dotProduct(v2), 0.3);
 
         // =============== Boundary Values Tests ==================
         // test orthogonal vectors from Dot product return Zero
-        assertEquals("DotProduct() should return zero orthogonal vectors", 0, v1.dotProduct(v3), 0.3);
+        assertEquals("dotProduct() should return zero orthogonal vectors",
+                0, v1.dotProduct(v3), 0.3);
     }
 
     @Test
-    public void testCrossProduct() {
+    public void crossProductTest() {
         /*Vector v1 = new Vector(1,2,3);
         Vector v2 = new Vector(-5,7,-8);
 
@@ -136,37 +156,44 @@ public class VectorTest {
     }
 
     @Test
-    public void testLengthSquared() {
+    public void lengthSquaredTest() {
 
         Vector v1 = new Vector(2,3,4);
-        Vector v2 = new Vector(1,1,1);
+        Vector v2 = new Vector(-1,1,-1);
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(29, v1.lengthSquared(), 0.3);
-        assertEquals(3, v2.lengthSquared(), 0.3);
+        assertEquals("lengthSquared() function not working correctly",
+                29, v1.lengthSquared(), 0.3);
+        assertEquals("lengthSquared() NEGATIVE function not working correctly",
+                3, v2.lengthSquared(), 0.3);
 
     }
 
     @Test
-    public void testLength() {
+    public void lengthTest() {
         Vector v1 = new Vector(2,3,4);
+        Vector v2 = v1.scale(-1);
+
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(5.385, v1.length(), 0.0003);
+        assertEquals("length() function not working correctly",
+                5.385, v1.length(), 0.0003);
+        assertEquals("length() NEGATIVE function not working correctly",
+                5.385, v2.length(), 0.0003);
     }
 
     @Test
-    public void testNormalize() {
+    public void normalizeTest() {
         Vector v1 = new Vector(6,6,3);
 
         v1.normalize();
         // ============ Equivalence Partitions Tests ==============
-        assertTrue("ERROR: Normalize() function not create vector with length of value 1", v1.length() == 1);
+        assertTrue("ERROR: Normalize() function not create vector with length of value 1",
+                v1.length() == 1);
         assertEquals(new Vector(6/9d, 6/9d, 3/9d), v1);
-
     }
 
     @Test
-    public void testNormalized() {
+    public void normalizedTest() {
 
         Vector v1 = new Vector(6,6,3);
         Vector v1Old = new Vector(v1);

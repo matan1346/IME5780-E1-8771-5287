@@ -24,15 +24,20 @@ public class Plane implements Geometry {
      * Constructor that gets three points and sets them point and normal vector
      * Using 3 points to calculate the normal vector
      * The first point is selected to represents the point position of plane
-     * @param _p1 point object represents a point in the plane
-     * @param _p2 point object represents a point in the plane
-     * @param _p3 point object represents a point in the plane
+     * @param p1 point object represents a point in the plane
+     * @param p2 point object represents a point in the plane
+     * @param p3 point object represents a point in the plane
      */
-    public Plane(Point3D _p1,Point3D _p2,Point3D _p3) {
+    public Plane(Point3D p1,Point3D p2,Point3D p3)
+    {
+        _p = new Point3D(p1);
 
-        this._p = _p1;
-        normal = null;
+        Vector U = p2.subtract(p1);
+        Vector V = p3.subtract(p1);
+        Vector N = U.crossProduct(V);
+        N.normalize();
 
+        normal = N.scale(-1);
     }
 
     /**
@@ -58,17 +63,17 @@ public class Plane implements Geometry {
      * @return Vector normal vector
      */
     public Vector getNormal() {
-        return normal;
+        return getNormal(null);
     }
 
     /**
      * Calculating the normal vector of the plane in specific point
-     * @param p1 point object
+     * @param p point object
      * @return new vector that is normal to that plane
      */
-    public Vector getNormal(Point3D p1)
+    public Vector getNormal(Point3D p)
     {
-        return null;
+        return normal;
     }
 
     @Override

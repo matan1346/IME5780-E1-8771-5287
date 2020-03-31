@@ -26,10 +26,12 @@ public class TriangleTest {
 //    }
 
     @Test
-    public void getNormal() {
+    public void getNormalTest() {
         // ============ Equivalence Partitions Tests ==============
         Triangle t1 = new Triangle(new Point3D(1,0,0), new Point3D(0,1,0), new Point3D(0,0,1));
-        double sqrt3 = Math.sqrt(1d / 3);
-        assertEquals("Bad normal to trinagle", new Vector(sqrt3, sqrt3, sqrt3), t1.getNormal(new Point3D(0, 0, 1)));
+        double sqrt3 = -Math.sqrt(1d / 3);
+        //System.out.println(t1.getNormal(new Point3D(0, 0, 1)));
+        assertEquals("Bad normal to triangle",
+                new Vector(sqrt3, sqrt3, sqrt3), t1.getNormal(new Point3D(0, 0, 1)));
     }
 }

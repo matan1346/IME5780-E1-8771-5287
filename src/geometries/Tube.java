@@ -1,10 +1,11 @@
 package geometries;
 
-import primitives.Point3D;
-import primitives.Ray;
-import primitives.Vector;
+
+import primitives.*;
 
 import java.util.Objects;
+
+import static primitives.Util.isZero;
 
 /**
  * Tube class represents a tube in 3D dimension
@@ -35,12 +36,26 @@ public class Tube extends RadialGeometry {
 
     /**
      * Calculating the normal vector of the Tube in specific point
-     * @param p1 point object
+     * @param p point object
      * @return new vector that is normal to that tube
      */
-    public Vector getNormal(Point3D p1)
-    {
-        return null;
+    public Vector getNormal(Point3D p) {
+        //The vector from the point of the cylinder to the given point
+        Point3D o = _axisRay.get_p();
+        Vector v = _axisRay.get_dir();
+
+        Vector vector1 = p.subtract(o);
+
+        //We need the projection to multiply the _direction unit vector
+        double projection = vector1.dotProduct(v);
+        if (!isZero(projection)) {
+            // projection of P-O on the ray:
+            o.add(v.scale(projection));
+        }
+
+        //This vector is orthogonal to the _direction vector.
+        Vector check = p.subtract(o);
+        return check.normalize();
     }
 
     @Override
