@@ -171,6 +171,7 @@ public class VectorTest {
 
     @Test
     public void lengthTest() {
+        
         Vector v1 = new Vector(2,3,4);
         Vector v2 = v1.scale(-1);
 
