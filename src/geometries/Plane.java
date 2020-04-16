@@ -7,6 +7,9 @@ import primitives.Vector;
 import java.util.List;
 import java.util.Objects;
 
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
+
 /**
  * Plane class that represents a plan in the 3D dimension
  */
@@ -102,6 +105,19 @@ public class Plane implements Geometry {
 
     @Override
     public List<Point3D> findIntersections(Ray ray) {
-        return null;
+        Vector p0Q;
+        try {
+            p0Q = _p.subtract(ray.get_p());
+        } catch (IllegalArgumentException e) {
+            return null; // ray starts from point Q - no intersections
+        }
+
+        double nv = normal.dotProduct(ray.get_dir());
+        if (isZero(nv)) // ray is parallel to the plane - no intersections
+            return null;
+
+        double t = alignZero(normal.dotProduct(p0Q) / nv);
+
+        return t <= 0 ? null : List.of(ray.getTargetPoint(t));
     }
 }

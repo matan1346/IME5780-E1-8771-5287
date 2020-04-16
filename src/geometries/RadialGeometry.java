@@ -12,7 +12,7 @@ public abstract class RadialGeometry implements Geometry {
     /**
      * the value of the radius
      */
-    private double _radius;
+    protected double _radius;
 
     /**
      * Constructor that gets radius value and sets it

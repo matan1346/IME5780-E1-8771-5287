@@ -2,6 +2,8 @@ package primitives;
 
 import java.util.Objects;
 
+import static primitives.Util.isZero;
+
 /**
  * Ray class that represents a ray in a 3D Dimension
  */
@@ -74,5 +76,13 @@ public class Ray {
                 "Point: " + _p +
                 ", Direction " + _dir +
                 "]";
+    }
+
+    /**
+     * @param length
+     * @return new Point3D
+     */
+    public Point3D getTargetPoint(double length) {
+        return isZero(length ) ? _p : _p.add(_dir.scale(length));
     }
 }
