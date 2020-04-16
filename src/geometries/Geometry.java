@@ -5,7 +5,7 @@ import primitives.*;
 /**
  * Geometry interface that represents the actions and stuff Geometries are responsible to supply
  */
-public interface Geometry {
+public interface Geometry extends Intersectable {
     /**
      * Calculating the normal vector of the geometry
      * @param p point object

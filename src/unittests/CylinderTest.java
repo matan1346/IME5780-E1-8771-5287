@@ -20,4 +20,8 @@ public class CylinderTest {
 
 
     }
+
+    @Test
+    public void findIntersections() {
+    }
 }
