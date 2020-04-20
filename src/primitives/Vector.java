@@ -1,7 +1,6 @@
 package primitives;
 
 
-import java.awt.*;
 import java.util.Objects;
 
 import static java.lang.Math.sqrt;
@@ -81,9 +80,9 @@ public class Vector {
      */
     public Vector add(Vector v1)
     {
-        return new Vector(new Point3D(v1._header.getCoord1().get() + this._header.getCoord1().get(),
-                                        v1._header.getCoord2().get() + this._header.getCoord2().get(),
-                                        v1._header.getCoord3().get() + this._header.getCoord3().get())
+        return new Vector(new Point3D(v1._header.getX().get() + this._header.getX().get(),
+                                        v1._header.getY().get() + this._header.getY().get(),
+                                        v1._header.getZ().get() + this._header.getZ().get())
                         );
     }
 
@@ -94,9 +93,9 @@ public class Vector {
      */
     public Vector subtract(Vector v1)
     {
-        return new Vector(new Point3D(v1._header.getCoord1().get() - this._header.getCoord1().get(),
-                v1._header.getCoord2().get() - this._header.getCoord2().get(),
-                v1._header.getCoord3().get() - this._header.getCoord3().get())
+        return new Vector(new Point3D(v1._header.getX().get() - this._header.getX().get(),
+                v1._header.getY().get() - this._header.getY().get(),
+                v1._header.getZ().get() - this._header.getZ().get())
                );
     }
 
@@ -108,9 +107,9 @@ public class Vector {
     public Vector scale(double scalar)
     {
         return new Vector(
-                new Point3D(this._header.getCoord1().get() * scalar,
-                            this._header.getCoord2().get() * scalar,
-                            this._header.getCoord3().get() * scalar));
+                new Point3D(this._header.getX().get() * scalar,
+                            this._header.getY().get() * scalar,
+                            this._header.getZ().get() * scalar));
     }
 
 
@@ -121,14 +120,14 @@ public class Vector {
      */
     public double dotProduct(Vector v1)
     {
-        double d1 = this._header.getCoord1().get() * v1._header.getCoord1().get() +
-        this._header.getCoord2().get() * v1._header.getCoord2().get()+
-                this._header.getCoord3().get() * v1._header.getCoord3().get();
+        double d1 = this._header.getX().get() * v1._header.getX().get() +
+        this._header.getY().get() * v1._header.getY().get()+
+                this._header.getZ().get() * v1._header.getZ().get();
 
-        double divided = this._header.getCoord1().get() / v1._header.getCoord1().get();
+        double divided = this._header.getX().get() / v1._header.getX().get();
 
-        if(this._header.getCoord2().get() / v1._header.getCoord2().get() == divided &&
-            this._header.getCoord3().get() / v1._header.getCoord3().get() == divided)
+        if(this._header.getY().get() / v1._header.getY().get() == divided &&
+            this._header.getZ().get() / v1._header.getZ().get() == divided)
         {
             //Makbilim
         }
@@ -145,12 +144,12 @@ public class Vector {
     {
 
         return new Vector(
-                (this._header.getCoord2().get() *v1._header.getCoord3().get()) -
-                        (this._header.getCoord3().get() * v1._header.getCoord2().get()),
-                (this._header.getCoord3().get() * v1._header.getCoord1().get()) -
-                        (this._header.getCoord1().get() * v1._header.getCoord3().get()),
-                (this._header.getCoord1().get() * v1._header.getCoord2().get()) -
-                        (this._header.getCoord2().get() * v1._header.getCoord1().get()));
+                (this._header.getY().get() *v1._header.getZ().get()) -
+                        (this._header.getZ().get() * v1._header.getY().get()),
+                (this._header.getZ().get() * v1._header.getX().get()) -
+                        (this._header.getX().get() * v1._header.getZ().get()),
+                (this._header.getX().get() * v1._header.getY().get()) -
+                        (this._header.getY().get() * v1._header.getX().get()));
     }
 
     /**
@@ -179,9 +178,9 @@ public class Vector {
     {
         double distance = length();
         _header = new Point3D(
-                _header.getCoord1().get() / distance,
-                _header.getCoord2().get() / distance,
-                _header.getCoord3().get() / distance);
+                _header.getX().get() / distance,
+                _header.getY().get() / distance,
+                _header.getZ().get() / distance);
         return this;
     }
 

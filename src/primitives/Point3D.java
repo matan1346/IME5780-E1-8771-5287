@@ -1,8 +1,6 @@
 
 package primitives;
 import java.util.*;
-import java.math.*;
-import java.lang.Math;
 
 import static java.lang.Math.sqrt;
 
@@ -13,15 +11,15 @@ public class Point3D {
     /**
      * Coordinate that represents the x point
      */
-    private Coordinate coord1;
+    private Coordinate coord_X;
     /**
      * Coordinate that represents the y point
      */
-    private Coordinate coord2;
+    private Coordinate coord_Y;
     /**
      * Coordinate that represents the z point
      */
-    private Coordinate coord3;
+    private Coordinate coord_Z;
     /**
      * Default point with values (0,0,0)
      */
@@ -34,9 +32,9 @@ public class Point3D {
      * @param coord3 z coordinate
      */
     public Point3D(Coordinate coord1, Coordinate coord2, Coordinate coord3) {
-        this.coord1 = coord1;
-        this.coord2 = coord2;
-        this.coord3 = coord3;
+        this.coord_X = coord1;
+        this.coord_Y = coord2;
+        this.coord_Z = coord3;
     }
 
     /**
@@ -54,31 +52,31 @@ public class Point3D {
      * @param point3D point object
      */
     public Point3D(Point3D point3D) {
-        this(new Coordinate(point3D.coord1), new Coordinate(point3D.coord2), new Coordinate(point3D.coord3));
+        this(new Coordinate(point3D.coord_X), new Coordinate(point3D.coord_Y), new Coordinate(point3D.coord_Z));
     }
 
     /**
      * return the x coordinate of the point
      * @return Coordinate x coordinate
      */
-    public Coordinate getCoord1() {
-        return coord1;
+    public Coordinate getX() {
+        return coord_X;
     }
 
     /**
      * return the y coordinate of the point
      * @return Coordinate y coordinate
      */
-    public Coordinate getCoord2() {
-        return coord2;
+    public Coordinate getY() {
+        return coord_Y;
     }
 
     /**
      * return the z coordinate of the point
      * @return Coordinate z coordinate
      */
-    public Coordinate getCoord3() {
-        return coord3;
+    public Coordinate getZ() {
+        return coord_Z;
     }
 
     /**
@@ -88,9 +86,9 @@ public class Point3D {
      */
     public Vector subtract(Point3D p1)
     {
-        return new Vector(this.getCoord1().get() - p1.getCoord1().get(),
-                this.getCoord2().get() - p1.getCoord2().get(),
-                this.getCoord3().get() - p1.getCoord3().get());
+        return new Vector(this.getX().get() - p1.getX().get(),
+                this.getY().get() - p1.getY().get(),
+                this.getZ().get() - p1.getZ().get());
     }
 
     /**
@@ -99,9 +97,9 @@ public class Point3D {
      * @return Point3D new point after adding vector
      */
     public Point3D add(Vector v1){
-        return new Point3D(v1.getHeader().getCoord1().get() + coord1.get(),
-                v1.getHeader().getCoord2().get() + coord2.get(),
-                v1.getHeader().getCoord3().get() + coord3.get());
+        return new Point3D(v1.getHeader().getX().get() + coord_X.get(),
+                v1.getHeader().getY().get() + coord_Y.get(),
+                v1.getHeader().getZ().get() + coord_Z.get());
     }
 
     /**
@@ -110,9 +108,9 @@ public class Point3D {
      * @return double squared distance
      */
     public double distanceSquared(Point3D p){
-        return  (this.coord1._coord - p.coord1._coord) * (this.coord1._coord - p.coord1._coord) +
-                (this.coord2._coord - p.coord2._coord) * (this.coord2._coord - p.coord2._coord) +
-                (this.coord3._coord - p.coord3._coord) * (this.coord3._coord - p.coord3._coord);
+        return  (this.coord_X._coord - p.coord_X._coord) * (this.coord_X._coord - p.coord_X._coord) +
+                (this.coord_Y._coord - p.coord_Y._coord) * (this.coord_Y._coord - p.coord_Y._coord) +
+                (this.coord_Z._coord - p.coord_Z._coord) * (this.coord_Z._coord - p.coord_Z._coord);
     }
 
     /**
@@ -129,18 +127,18 @@ public class Point3D {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point3D point3D = (Point3D) o;
-        return coord1.equals(point3D.coord1) &&
-                coord2.equals(point3D.coord2) &&
-                coord3.equals(point3D.coord3);
+        return coord_X.equals(point3D.coord_X) &&
+                coord_Y.equals(point3D.coord_Y) &&
+                coord_Z.equals(point3D.coord_Z);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coord1, coord2, coord3);
+        return Objects.hash(coord_X, coord_Y, coord_Z);
     }
 
     @Override
     public String toString() {
-        return "[" + coord1 + ", " + coord2 + ", " + coord3 + "]";
+        return "[" + coord_X + ", " + coord_Y + ", " + coord_Z + "]";
     }
 }

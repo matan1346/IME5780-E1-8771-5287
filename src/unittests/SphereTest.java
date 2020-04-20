@@ -68,7 +68,7 @@ public class SphereTest {
         List<Point3D> result = sphere.findIntersections(new Ray(new Point3D(-1, 0, 0), new Vector(3, 1, 0)));
 
         assertEquals( "Wrong number of points",2, result.size());
-        if (result.get(0).getCoord1().get() > result.get(1).getCoord1().get()) {
+        if (result.get(0).getX().get() > result.get(1).getX().get()) {
             result = List.of(result.get(1), result.get(0));
         }
         assertEquals("Ray crosses sphere", exp, result);
@@ -93,7 +93,7 @@ public class SphereTest {
         result = sphere.findIntersections(new Ray(new Point3D(1, -2, 0), new Vector(0, 1, 0)));
 
         assertEquals( "Wrong number of points",2, result.size());
-        if (result.get(0).getCoord2().get() > result.get(1).getCoord2().get()) {
+        if (result.get(0).getY().get() > result.get(1).getY().get()) {
             result = List.of(result.get(1), result.get(0));
         }
         assertEquals("Line through O, ray crosses sphere", List.of(new Point3D(1, -1, 0), new Point3D(1, 1, 0)), result);
