@@ -38,10 +38,10 @@ public class TriangleTest {
 
     @Test
     public void findIntersections() {
-        Triangle t = new Triangle(new Point3D(2,0,0),new Point3D(0,0,2),new Point3D(0,2,0));
-
+        //Triangle t = new Triangle(new Point3D(2,0,0),new Point3D(0,0,2),new Point3D(0,2,0));
+        Triangle t = new Triangle(new Point3D(0,2,0),new Point3D(0,0,2),new Point3D(2,0,0));
         //EP - Ray intersect triangle in the middle
-        Ray r1 = new Ray(new Point3D(0,0,0), new Vector(1,0.67,0.34).normalize());
+        Ray r1 = new Ray(new Point3D(3.03,3.26,0), new Vector(-2.71,-2.59,1.01).normalize());
 
 
         List<Point3D> intersection = t.findIntersections(r1);
