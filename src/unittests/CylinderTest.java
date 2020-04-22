@@ -4,6 +4,8 @@ import geometries.*;
 import primitives.*;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class CylinderTest {
@@ -23,5 +25,22 @@ public class CylinderTest {
 
     @Test
     public void findIntersections() {
+
+        Cylinder c = new Cylinder(new Ray(new Point3D(0,0,0), new Vector(0,0,4).normalize()),
+                2, 4);
+
+
+        //EP - 2 intersections from down to top
+        Ray r1 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2).normalize());
+
+        List<Point3D> intersections1 = c.findIntersections(r1);
+
+        System.out.println(intersections1);
+
+        //EP -
+        Ray r2 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2).normalize());
+
+
+
     }
 }
