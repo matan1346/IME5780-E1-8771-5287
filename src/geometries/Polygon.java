@@ -85,6 +85,11 @@ public class Polygon implements Geometry {
         return _plane.getNormal();
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the polygon
+     * @param ray Ray which should intersect with the plane
+     * @return List<Point3D> which should return null on none point, or list of points that intersect the polygon
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         List<Point3D> intersections = _plane.findIntersections(ray);

@@ -63,6 +63,11 @@ public class Sphere extends RadialGeometry {
                 '}';
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the sphere
+     * @param ray Ray which should intersect with the sphere
+     * @return List<Point3D> which should return null on none point, or list of points that intersect the sphere
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         Point3D p0 = ray.get_p();

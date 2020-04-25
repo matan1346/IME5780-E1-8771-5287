@@ -120,19 +120,9 @@ public class Vector {
      */
     public double dotProduct(Vector v1)
     {
-        double d1 = this._header.getX().get() * v1._header.getX().get() +
+       return this._header.getX().get() * v1._header.getX().get() +
         this._header.getY().get() * v1._header.getY().get()+
                 this._header.getZ().get() * v1._header.getZ().get();
-
-        double divided = this._header.getX().get() / v1._header.getX().get();
-
-        if(this._header.getY().get() / v1._header.getY().get() == divided &&
-            this._header.getZ().get() / v1._header.getZ().get() == divided)
-        {
-            //Makbilim
-        }
-
-     return d1;
     }
 
     /**

@@ -103,6 +103,11 @@ public class Plane implements Geometry {
                 '}';
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the plane
+     * @param ray Ray which should intersect with the plane
+     * @return List<Point3D> which should return null on none point, intersect of 1 point which intersect the plane
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         Vector p0Q;

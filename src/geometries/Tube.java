@@ -80,14 +80,13 @@ public class Tube extends RadialGeometry {
                 "\t" + _axisRay +
                 "\n\t" + super.toString() +
                 "\n}";
-
-
-        /*
-        * Tube{_axisRay=Ray{_p=[1.0, 2.0, 3.0], _dir=Vector{_header=[0.2672612419124244, 0.5345224838248488, 0.8017837257372732]}}}
-        *
-        * */
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the tube
+     * @param ray Ray which should intersect with the tube
+     * @return List<Point3D> which should return null on none point, or list of points that intersect the tube
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         return null;

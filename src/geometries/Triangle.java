@@ -32,6 +32,11 @@ public class Triangle extends Polygon {
                 "\n}";
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the triangle
+     * @param ray Ray which should intersect with the triangle
+     * @return List<Point3D> which should return null on none point, or list of points that intersect the triangle
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         List<Point3D> intersections = _plane.findIntersections(ray);

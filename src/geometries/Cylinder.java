@@ -87,6 +87,11 @@ public class Cylinder extends Tube {
         return Objects.hash(super.hashCode(), height);
     }
 
+    /**
+     * calculate the points of the intersections with the given ray to the cylinder
+     * @param ray Ray which should intersect with the cylinder
+     * @return List<Point3D> which should return null on none point, or list of points that intersect the cylinder
+     */
     @Override
     public List<Point3D> findIntersections(Ray ray) {
         return super.findIntersections(ray);
