@@ -50,7 +50,7 @@ public class Sphere extends RadialGeometry {
         Sphere sphere = (Sphere) o;
         return _center.equals(sphere._center);
     }
-
+    //
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), _center);

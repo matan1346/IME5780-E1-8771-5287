@@ -107,7 +107,7 @@ public class VectorTest {
             fail("scale() If multiplied by zero does not throw an exception");
         } catch (Exception e) {}
     }
-
+    //
     @Test
     public void dotProductTest() {
         Vector v1 = new Vector(1,2,3);
