@@ -183,7 +183,9 @@ public class CameraRayIntegrationTest {
     @Test
     public void IntegrationPlane2Test()
     {
-        Plane pl = new Plane(new Point3D(1,8,0), new Point3D(0,0,3), new Point3D(5,-5,5));
+        //Plane pl = new Plane(new Point3D(1,8,0), new Point3D(0,0,3), new Point3D(5,-5,5));
+        Plane pl = new Plane(new Point3D(-1,-20,-10), new Point3D(0,15,10), new Point3D(1,-20,-10));
+
         int count = 0;
 
         for(int i = 0;i < Nx;i++)
