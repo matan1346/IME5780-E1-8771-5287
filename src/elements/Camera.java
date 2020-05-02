@@ -9,9 +9,24 @@ import static primitives.Util.isZero;
  * Camera class for represents a class
  */
 public class Camera {
+    /**
+     * Point3D the center point of the camera
+     */
     private Point3D _p0;
+
+    /**
+     * Vector the towards vector of the camera
+     */
     private Vector _Vto;
+
+    /**
+     * Vector the up vector of the camera
+     */
     private Vector _Vup;
+
+    /**
+     * Vector the right vector of the camera
+     */
     private Vector _Vright;
 
     /**
@@ -32,6 +47,17 @@ public class Camera {
         _Vright = vto.crossProduct(vup).normalize();
     }
 
+    /**
+     * Gets the layout of the view plane, with units of width, height and positions
+     * @param nX int width per item
+     * @param nY int height per item
+     * @param j int the position of the column
+     * @param i int the position of thr row
+     * @param screenDistance double screen distance
+     * @param screenWidth double screen width
+     * @param screenHeight double screen height
+     * @return Ray the construct ray in the position i,j with this view plane
+     */
     public Ray constructRayThroughPixel (int nX, int nY,
                                          int j, int i, double screenDistance,
                                          double screenWidth, double screenHeight)
@@ -57,20 +83,34 @@ public class Camera {
         return new Ray(_p0, Vij.normalize());
     }
 
-
-
+    /**
+     * Getter that gets the center point of the camera
+     * @return Point3D center point of camera
+     */
     public Point3D getP0() {
         return _p0;
     }
 
+    /**
+     * Getter that gets the towards vector of camera
+     * @return Vector towards vector of camera
+     */
     public Vector getVto() {
         return _Vto;
     }
 
+    /**
+     * Getter that gets the vector that points up of camera
+     * @return Vector up vector of camera
+     */
     public Vector getVup() {
         return _Vup;
     }
 
+    /**
+     * Getter that gets the vector that points right of camera
+     * @return Vector right vector of camera
+     */
     public Vector getVright() {
         return _Vright;
     }
