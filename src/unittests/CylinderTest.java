@@ -26,19 +26,18 @@ public class CylinderTest {
     @Test
     public void findIntersections() {
 
-        Cylinder c = new Cylinder(new Ray(new Point3D(0,0,0), new Vector(0,0,4).normalize()),
+        Cylinder c = new Cylinder(new Ray(new Point3D(0,0,0), new Vector(0,0,4)),
                 2, 4);
 
 
         //EP - 2 intersections from down to top
-        Ray r1 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2).normalize());
+        Ray r1 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2));
 
         List<Point3D> intersections1 = c.findIntersections(r1);
 
-        System.out.println(intersections1);
 
         //EP -
-        Ray r2 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2).normalize());
+        Ray r2 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2));
 
 
 

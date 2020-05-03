@@ -21,16 +21,10 @@ public class Ray {
      * Constructor that gets a point and a vector and sets them
      * @param _p point object represents the header of the Ray
      * @param _dir vector object represents the vector of the Ray
-     * @throws IllegalArgumentException throw exception when vector is not normalized
      */
     public Ray(Point3D _p, Vector _dir) throws IllegalArgumentException {
-
-
-        if(!isZero(_dir.length() - 1.0))
-            throw new IllegalArgumentException("Vector is not normalized");
-
         this._p = new Point3D(_p);
-        this._dir = new Vector(_dir);
+        this._dir = _dir.normalized();
     }
 
     /**

@@ -41,7 +41,7 @@ public class TriangleTest {
         //Triangle t = new Triangle(new Point3D(2,0,0),new Point3D(0,0,2),new Point3D(0,2,0));
         Triangle t = new Triangle(new Point3D(0,2,0),new Point3D(0,0,2),new Point3D(2,0,0));
         //EP - Ray intersect triangle in the middle
-        Ray r1 = new Ray(new Point3D(3.03,3.26,0), new Vector(-2.71,-2.59,1.01).normalize());
+        Ray r1 = new Ray(new Point3D(3.03,3.26,0), new Vector(-2.71,-2.59,1.01));
 
 
         List<Point3D> intersection = t.findIntersections(r1);
@@ -49,7 +49,7 @@ public class TriangleTest {
         assertEquals("Error, no intersection with ray inside triangle", 1, intersection.size());
 
         //EP - Ray no intersect triangle - outside edge
-        Ray r2 = new Ray(new Point3D(-1,-2,1), new Vector(3,10,3).normalize());
+        Ray r2 = new Ray(new Point3D(-1,-2,1), new Vector(3,10,3));
 
         List<Point3D> no_intersections1 = t.findIntersections(r2);
 
@@ -57,7 +57,7 @@ public class TriangleTest {
 
 
         //EP - Ray no intersect triangle - outside vertex
-        Ray r3 = new Ray(new Point3D(2.01,2.82,0), new Vector(0,0,2.15).normalize());
+        Ray r3 = new Ray(new Point3D(2.01,2.82,0), new Vector(0,0,2.15));
 
         List<Point3D> no_intersections2 = t.findIntersections(r3);
 
@@ -68,7 +68,7 @@ public class TriangleTest {
         /***VBA***/
 
         //VBA - no intersection with ray on edge triangle
-        Ray r4 = new Ray(new Point3D(2.57, 2.48, 0), new Vector(1.14,0,0.86).normalize());
+        Ray r4 = new Ray(new Point3D(2.57, 2.48, 0), new Vector(1.14,0,0.86));
 
         List<Point3D> no_intersections3 = t.findIntersections(r4);
 
@@ -76,14 +76,14 @@ public class TriangleTest {
         assertEquals("Error, intersection with ray on edge triangle", null, no_intersections3);
 
         //VBA  - no intersection with ray on vertex triangle
-        Ray r5 = new Ray(new Point3D(3.53,1.25,0), new Vector(2,0,0).normalize());
+        Ray r5 = new Ray(new Point3D(3.53,1.25,0), new Vector(2,0,0));
 
         List<Point3D> no_intersections4 = t.findIntersections(r5);
 
         assertEquals("Error, intersection with ray on vertex triangle", null, no_intersections4);
 
         //VBA - no intersect, ray outside triangle, continue of edge..
-        Ray r6 = new Ray(new Point3D(3.46,1.65,0), new Vector(0, -0.5, 2.5).normalize());
+        Ray r6 = new Ray(new Point3D(3.46,1.65,0), new Vector(0, -0.5, 2.5));
 
 
         List<Point3D> no_intersections5 = t.findIntersections(r6);

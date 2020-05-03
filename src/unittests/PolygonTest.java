@@ -99,7 +99,7 @@ public class PolygonTest {
 
 
         //EP - intersection inside the polygon
-        Ray r2 = new Ray(new Point3D(0,0,-3), new Vector(2, 0, 3).normalize());
+        Ray r2 = new Ray(new Point3D(0,0,-3), new Vector(2, 0, 3));
 
         List<Point3D> intersection1 = p.findIntersections(r2);
 
@@ -107,7 +107,7 @@ public class PolygonTest {
 
 
         //VBA - no intersection outside the polygon
-        Ray r3 = new Ray(new Point3D(0,0,3), new Vector(0,-9,-3).normalize());
+        Ray r3 = new Ray(new Point3D(0,0,3), new Vector(0,-9,-3));
 
         List<Point3D> no_intersections1 = p.findIntersections(r3);
 
@@ -115,7 +115,7 @@ public class PolygonTest {
 
 
         //VBA - no intersection on edge
-        Ray r4 = new Ray(new Point3D(0,0,-3), new Vector(4.22,1.19,3).normalize());
+        Ray r4 = new Ray(new Point3D(0,0,-3), new Vector(4.22,1.19,3));
 
         List<Point3D> no_intersections2 = p.findIntersections(r4);
 
@@ -123,7 +123,7 @@ public class PolygonTest {
 
 
         //VBA - no intersection on the vertex
-        Ray r5 = new Ray(new Point3D(0,0,-3), new Vector(0, 4, 3).normalize());
+        Ray r5 = new Ray(new Point3D(0,0,-3), new Vector(0, 4, 3));
 
         List<Point3D> no_intersections3 = p.findIntersections(r5);
 

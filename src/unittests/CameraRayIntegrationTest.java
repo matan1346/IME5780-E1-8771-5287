@@ -201,7 +201,7 @@ public class CameraRayIntegrationTest {
         assertEquals("ERROR - INTEGRATION PLANE FAILED ON 9 INTERSECTIONS", 9, count);
 
     }
-    
+
     @Test
     public void IntegrationPlane3Test()
     {
