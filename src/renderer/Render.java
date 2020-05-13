@@ -8,15 +8,33 @@ import scene.Scene;
 
 import java.util.List;
 
+/**
+ * Render class that set the scene and the image writer and rendering
+ */
 public class Render {
+    /**
+     * ImageWrite object that represents the image
+     */
     ImageWriter _imageWriter;
+
+    /**
+     * Scene object that represents the scene
+     */
     Scene _scene;
 
+    /**
+     * Constructor that gets imageWriter and a scene, and sets them
+     * @param imageWriter ImageWriter image writer object
+     * @param scene Scene scene object
+     */
     public Render(ImageWriter imageWriter, Scene scene) {
         this._imageWriter = imageWriter;
         this._scene = scene;
     }
 
+    /**
+     * This method is making image with the camera and image, and renders it
+     */
     public void renderImage(){
         Camera camera = _scene.getCamera();
 
@@ -46,11 +64,21 @@ public class Render {
 
     }
 
+    /**
+     * Calculating the color by a Point
+     * @param p Point3D the point that in the calculation
+     * @return Color new color after calculation
+     */
     public Color calcColor(Point3D p){
         return _scene.getAmbientLight().getIntensity();
     }
 
-    public Point3D getClosestPoint(List<Point3D> points)
+    /**
+     * Method that gets list of points and return the closest point to the camera
+     * @param points List<Point3D> list of points
+     * @return Point3D the closest point to the camera
+     */
+    private Point3D getClosestPoint(List<Point3D> points)
     {
         double minDistance = Double.MAX_VALUE;
         double distance;
@@ -86,6 +114,9 @@ public class Render {
         }
     }
 
+    /**
+     * This method is calling the writerToImage method
+     */
     public void writeToImage() {
         _imageWriter.writeToImage();
     }

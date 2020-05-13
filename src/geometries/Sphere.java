@@ -4,7 +4,9 @@ import primitives.Point3D;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.awt.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static primitives.Util.alignZero;
@@ -28,6 +30,16 @@ public class Sphere extends RadialGeometry {
     {
         super(r);
         this._center = _p;
+    }
+
+    /**
+     * Constructor that get attributes of this object from xml and sets them
+     * @param sphereAttributes Map<String, String> attributes of this object
+     */
+    public Sphere(Map<String, String> sphereAttributes) {
+        super(Double.valueOf((String)sphereAttributes.get("radius")));
+        String[] center = ((String)sphereAttributes.get("center")).split("\\s+");
+        this._center = new Point3D(Double.valueOf(center[0]), Double.valueOf(center[1]), Double.valueOf(center[2]));
     }
 
     /**

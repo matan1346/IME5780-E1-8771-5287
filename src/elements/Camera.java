@@ -3,6 +3,8 @@ package elements;
 
 import primitives.*;
 
+import java.util.Map;
+
 import static primitives.Util.isZero;
 
 /**
@@ -46,6 +48,30 @@ public class Camera {
         _Vup = vup.normalized();
         _Vright = vto.crossProduct(vup).normalize();
     }
+
+    /**
+     * Private constructor that gets params of points from xml and sets them
+     * @param p0params String[] params of point0
+     * @param vToParams String[] params of point1
+     * @param vUpParams String[] params of point2
+     */
+    private Camera(String[] p0params, String[] vToParams, String[] vUpParams)
+    {
+        this(new Point3D(Double.valueOf(p0params[0]), Double.valueOf(p0params[1]), Double.valueOf(p0params[2])),
+                new Vector(Double.valueOf(vToParams[0]), Double.valueOf(vToParams[1]), Double.valueOf(vToParams[2])),
+                new Vector(Double.valueOf(vUpParams[0]), Double.valueOf(vUpParams[1]), Double.valueOf(vUpParams[2])));
+
+    }
+
+    /**
+     * Constructor that sets the attributes of this object from xml
+     * @param attributes Map<String, String> attributes to set
+     */
+    public Camera(Map<String, String> attributes) {
+        this(((String)attributes.get("P0")).split("\\s+"),
+                ((String)attributes.get("Vto")).split("\\s+"),
+                ((String)attributes.get("Vup")).split("\\s+"));
+        }
 
     /**
      * Gets the layout of the view plane, with units of width, height and positions
