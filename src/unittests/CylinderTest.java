@@ -1,5 +1,7 @@
 package unittests;
 
+import geometries.Intersectable.GeoPoint;
+
 import geometries.*;
 import primitives.*;
 import org.junit.Test;
@@ -33,7 +35,7 @@ public class CylinderTest {
         //EP - 2 intersections from down to top
         Ray r1 = new Ray(new Point3D(-8,-2,0), new Vector(0,0,2));
 
-        List<Point3D> intersections1 = c.findIntersections(r1);
+        List<GeoPoint> intersections1 = c.findIntersections(r1);
 
 
         //EP -

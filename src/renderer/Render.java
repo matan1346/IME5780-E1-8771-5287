@@ -1,5 +1,7 @@
 package renderer;
 
+import geometries.Intersectable.GeoPoint;
+
 import elements.*;
 import geometries.Intersectable;
 import primitives.*;
@@ -51,12 +53,12 @@ public class Render {
                 Ray ray = camera.constructRayThroughPixel(nX, nY, j, i,
                         _scene.getDistance(), _imageWriter.getWidth(), _imageWriter.getHeight());
 
-                List<Point3D> intersectionPoints = geometries.findIntersections(ray);
+                List<GeoPoint> intersectionPoints = geometries.findIntersections(ray);
                 if(intersectionPoints == null)
                     _imageWriter.writePixel(j,i,background);
                 else
                 {
-                    Point3D closestPoint = getClosestPoint(intersectionPoints);
+                    GeoPoint closestPoint = getClosestPoint(intersectionPoints);
                     _imageWriter.writePixel(j,i,calcColor(closestPoint).getColor());
                 }
             }
@@ -69,8 +71,8 @@ public class Render {
      * @param p Point3D the point that in the calculation
      * @return Color new color after calculation
      */
-    public Color calcColor(Point3D p){
-        return _scene.getAmbientLight().getIntensity();
+    public Color calcColor(GeoPoint p){
+        return _scene.getAmbientLight().getIntensity().add(p.geometry.getEmission());
     }
 
     /**
@@ -78,22 +80,22 @@ public class Render {
      * @param points List<Point3D> list of points
      * @return Point3D the closest point to the camera
      */
-    private Point3D getClosestPoint(List<Point3D> points)
+    private GeoPoint getClosestPoint(List<GeoPoint> points)
     {
         double minDistance = Double.MAX_VALUE;
         double distance;
-        Point3D minPoint = null;
+        GeoPoint minGeoPoint = null;
         Camera camera = _scene.getCamera();
 
-        for (Point3D p: points) {
-            distance = camera.getP0().distance(p);
+        for (GeoPoint p: points) {
+            distance = camera.getP0().distance(p.point);
             if(distance < minDistance)
             {
                 minDistance = distance;
-                minPoint = new Point3D(p);
+                minGeoPoint = new GeoPoint(p.geometry, p.point);
             }
         }
-        return minPoint;
+        return minGeoPoint;
     }
 
     /**

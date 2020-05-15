@@ -1,10 +1,11 @@
 package geometries;
 
+import primitives.Color;
 import primitives.Point3D;
 import primitives.Ray;
 import primitives.Vector;
 
-import java.awt.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,13 +24,25 @@ public class Sphere extends RadialGeometry {
 
     /**
      * Constructor that gets a point and a radius value and sets them
-     * @param _p point object
-     * @param r radius value
+     * @param _p Point3D point object
+     * @param r double radius value
      */
     public Sphere(Point3D _p, double r)
     {
         super(r);
         this._center = _p;
+    }
+
+    /**
+     * Constructor that gets color emission of sphere, point and a radius, and sets them
+     * @param _emission Color emission color of sphere
+     * @param _p Point3D point object
+     * @param r double radius value
+     */
+    public Sphere(Color _emission, Point3D _p, double r)
+    {
+        this(_p, r);
+        this._emission = _emission;
     }
 
     /**
@@ -78,17 +91,17 @@ public class Sphere extends RadialGeometry {
     /**
      * calculate the points of the intersections with the given ray to the sphere
      * @param ray Ray which should intersect with the sphere
-     * @return List<Point3D> which should return null on none point, or list of points that intersect the sphere
+     * @return List<GeoPoint> which should return null on none point, or list of points that intersect the sphere
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray) {
         Point3D p0 = ray.get_p();
         Vector v = ray.get_dir();
         Vector u;
         try {
             u = _center.subtract(p0); // p0 == _center
         } catch (IllegalArgumentException e) {
-            return List.of(ray.getTargetPoint(_radius));
+            return List.of(new GeoPoint(this, ray.getTargetPoint(_radius)));
         }
         double tm = alignZero(v.dotProduct(u));
         double dSquared = (tm == 0) ? u.lengthSquared() : u.lengthSquared() - tm * tm;
@@ -102,10 +115,11 @@ public class Sphere extends RadialGeometry {
         double t1 = alignZero(tm - th);
         double t2 = alignZero(tm + th);
         if (t1 <= 0 && t2 <= 0) return null;
-        if (t1 > 0 && t2 > 0) return List.of(ray.getTargetPoint(t1), ray.getTargetPoint(t2)); //P1 , P2
+        if (t1 > 0 && t2 > 0) return List.of(new GeoPoint(this, ray.getTargetPoint(t1)),
+                new GeoPoint(this, ray.getTargetPoint(t2))); //P1 , P2
         if (t1 > 0)
-            return List.of(ray.getTargetPoint(t1));
+            return List.of(new GeoPoint(this, ray.getTargetPoint(t1)));
         else
-            return List.of(ray.getTargetPoint(t2));
+            return List.of(new GeoPoint(this ,ray.getTargetPoint(t2)));
     }
 }

@@ -1,5 +1,7 @@
 package unittests;
 
+import geometries.Intersectable.GeoPoint;
+
 import geometries.Triangle;
 import org.junit.Test;
 import primitives.*;
@@ -44,14 +46,14 @@ public class TriangleTest {
         Ray r1 = new Ray(new Point3D(3.03,3.26,0), new Vector(-2.71,-2.59,1.01));
 
 
-        List<Point3D> intersection = t.findIntersections(r1);
+        List<GeoPoint> intersection = t.findIntersections(r1);
 
         assertEquals("Error, no intersection with ray inside triangle", 1, intersection.size());
 
         //EP - Ray no intersect triangle - outside edge
         Ray r2 = new Ray(new Point3D(-1,-2,1), new Vector(3,10,3));
 
-        List<Point3D> no_intersections1 = t.findIntersections(r2);
+        List<GeoPoint> no_intersections1 = t.findIntersections(r2);
 
         assertEquals("Error, intersection with ray outside triangle with edge", null, no_intersections1);
 
@@ -59,7 +61,7 @@ public class TriangleTest {
         //EP - Ray no intersect triangle - outside vertex
         Ray r3 = new Ray(new Point3D(2.01,2.82,0), new Vector(0,0,2.15));
 
-        List<Point3D> no_intersections2 = t.findIntersections(r3);
+        List<GeoPoint> no_intersections2 = t.findIntersections(r3);
 
         assertEquals("Error, intersection with ray outside triangle with vertex", null, no_intersections2);
 
@@ -70,7 +72,7 @@ public class TriangleTest {
         //VBA - no intersection with ray on edge triangle
         Ray r4 = new Ray(new Point3D(2.57, 2.48, 0), new Vector(1.14,0,0.86));
 
-        List<Point3D> no_intersections3 = t.findIntersections(r4);
+        List<GeoPoint> no_intersections3 = t.findIntersections(r4);
 
 
         assertEquals("Error, intersection with ray on edge triangle", null, no_intersections3);
@@ -78,7 +80,7 @@ public class TriangleTest {
         //VBA  - no intersection with ray on vertex triangle
         Ray r5 = new Ray(new Point3D(3.53,1.25,0), new Vector(2,0,0));
 
-        List<Point3D> no_intersections4 = t.findIntersections(r5);
+        List<GeoPoint> no_intersections4 = t.findIntersections(r5);
 
         assertEquals("Error, intersection with ray on vertex triangle", null, no_intersections4);
 
@@ -86,7 +88,7 @@ public class TriangleTest {
         Ray r6 = new Ray(new Point3D(3.46,1.65,0), new Vector(0, -0.5, 2.5));
 
 
-        List<Point3D> no_intersections5 = t.findIntersections(r6);
+        List<GeoPoint> no_intersections5 = t.findIntersections(r6);
 
         assertEquals("Error, intersection with ray outside triangle continues edge", null, no_intersections5);
 

@@ -1,5 +1,8 @@
 package unittests;
 
+import geometries.Intersectable.GeoPoint;
+
+import geometries.Intersectable;
 import geometries.Polygon;
 import org.junit.Test;
 import primitives.*;
@@ -101,7 +104,7 @@ public class PolygonTest {
         //EP - intersection inside the polygon
         Ray r2 = new Ray(new Point3D(0,0,-3), new Vector(2, 0, 3));
 
-        List<Point3D> intersection1 = p.findIntersections(r2);
+        List<GeoPoint> intersection1 = p.findIntersections(r2);
 
         assertEquals("ERROR - 1 intersection must be with ray inside a polygon", 1, intersection1.size());
 
@@ -109,7 +112,7 @@ public class PolygonTest {
         //VBA - no intersection outside the polygon
         Ray r3 = new Ray(new Point3D(0,0,3), new Vector(0,-9,-3));
 
-        List<Point3D> no_intersections1 = p.findIntersections(r3);
+        List<GeoPoint> no_intersections1 = p.findIntersections(r3);
 
         assertEquals("ERROR - no intersection must be with ray outside a polygon", null, no_intersections1);
 
@@ -117,7 +120,7 @@ public class PolygonTest {
         //VBA - no intersection on edge
         Ray r4 = new Ray(new Point3D(0,0,-3), new Vector(4.22,1.19,3));
 
-        List<Point3D> no_intersections2 = p.findIntersections(r4);
+        List<GeoPoint> no_intersections2 = p.findIntersections(r4);
 
         assertEquals("ERROR - no intersection must be with ray on edge of polygon", null, no_intersections2);
 
@@ -125,7 +128,7 @@ public class PolygonTest {
         //VBA - no intersection on the vertex
         Ray r5 = new Ray(new Point3D(0,0,-3), new Vector(0, 4, 3));
 
-        List<Point3D> no_intersections3 = p.findIntersections(r5);
+        List<GeoPoint> no_intersections3 = p.findIntersections(r5);
 
         assertEquals("ERROR - no intersection must be with ray on vertex of polygon", null, no_intersections3);
     }

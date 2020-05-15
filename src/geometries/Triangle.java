@@ -1,5 +1,6 @@
 package geometries;
 
+import primitives.Color;
 import primitives.Point3D;
 import primitives.Ray;
 import primitives.Vector;
@@ -23,6 +24,18 @@ public class Triangle extends Polygon {
     public Triangle(Point3D p1, Point3D p2, Point3D p3)
     {
         super(p1, p2, p3);
+    }
+
+    /**
+     * Constructor that gets emission color of triangle, and 3 points, and sets them
+     * @param _emission Color emission color of triangle
+     * @param p1 Point3D point object
+     * @param p2 Point3D point object
+     * @param p3 Point3D point object
+     */
+    public Triangle(Color _emission, Point3D p1, Point3D p2, Point3D p3)
+    {
+        super(_emission, p1,p2,p3);
     }
 
     /**
@@ -62,8 +75,8 @@ public class Triangle extends Polygon {
      * @return List<Point3D> which should return null on none point, or list of points that intersect the triangle
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
-        List<Point3D> intersections = _plane.findIntersections(ray);
+    public List<GeoPoint> findIntersections(Ray ray) {
+        List<GeoPoint> intersections = _plane.findIntersections(ray);
         if (intersections == null) return null;
 
         Point3D p0 = ray.get_p();

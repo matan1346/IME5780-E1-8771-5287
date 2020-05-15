@@ -1,5 +1,6 @@
 package geometries;
 
+import primitives.Color;
 import primitives.Point3D;
 import primitives.Ray;
 import primitives.Vector;
@@ -13,7 +14,7 @@ import static primitives.Util.isZero;
 /**
  * Plane class that represents a plan in the 3D dimension
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
 
     /**
      * Point3D that represents the position
@@ -43,6 +44,19 @@ public class Plane implements Geometry {
         N.normalize();
 
         normal = N.scale(-1);
+    }
+
+    /**
+     * Constructor that gets emisson color, point1, point2 and point3, and sets them
+     * @param _emission Color emission color of plane
+     * @param p1 Point3D point 1 object represents a point in the plane
+     * @param p2 Point3D point 2 object represents a point in the plane
+     * @param p3 Point3D point 3 object represents a point in the plane
+     */
+    public Plane(Color _emission, Point3D p1, Point3D p2, Point3D p3)
+    {
+        this(p1,p2,p3);
+        this._emission = _emission;
     }
 
     /**
@@ -106,10 +120,10 @@ public class Plane implements Geometry {
     /**
      * calculate the points of the intersections with the given ray to the plane
      * @param ray Ray which should intersect with the plane
-     * @return List<Point3D> which should return null on none point, intersect of 1 point which intersect the plane
+     * @return List<GeoPoint> which should return null on none point, intersect of 1 point which intersect the plane
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray) {
         Vector p0Q;
         try {
             p0Q = _p.subtract(ray.get_p());
@@ -123,6 +137,11 @@ public class Plane implements Geometry {
 
         double t = alignZero(normal.dotProduct(p0Q) / nv);
 
-        return t <= 0 ? null : List.of(ray.getTargetPoint(t));
+        if (t <= 0) {
+            return null;
+        }
+
+        GeoPoint geo = new GeoPoint(this, ray.getTargetPoint(t));
+        return List.of(geo);
     }
 }

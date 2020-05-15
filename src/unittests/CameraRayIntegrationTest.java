@@ -1,5 +1,9 @@
 package unittests;
 
+
+import geometries.Intersectable.GeoPoint;
+
+
 import elements.Camera;
 import org.junit.Test;
 import primitives.*;
@@ -31,7 +35,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = sp.findIntersections(r);
+                List<GeoPoint> listPoints = sp.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -51,7 +55,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam2.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = sp.findIntersections(r);
+                List<GeoPoint> listPoints = sp.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -71,7 +75,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam2.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = sp.findIntersections(r);
+                List<GeoPoint> listPoints = sp.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -91,7 +95,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam2.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = sp.findIntersections(r);
+                List<GeoPoint> listPoints = sp.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -111,7 +115,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam2.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = sp.findIntersections(r);
+                List<GeoPoint> listPoints = sp.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -131,7 +135,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = tr.findIntersections(r);
+                List<GeoPoint> listPoints = tr.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -151,7 +155,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = tr.findIntersections(r);
+                List<GeoPoint> listPoints = tr.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -171,7 +175,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = pl.findIntersections(r);
+                List<GeoPoint> listPoints = pl.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -193,7 +197,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = pl.findIntersections(r);
+                List<GeoPoint> listPoints = pl.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }
@@ -213,7 +217,7 @@ public class CameraRayIntegrationTest {
             for(int j = 0;j < Ny;j++)
             {
                 Ray r = cam1.constructRayThroughPixel(Nx,Ny,j,i,screenDistance,screenWidth,screenHeight);
-                List<Point3D> listPoints = pl.findIntersections(r);
+                List<GeoPoint> listPoints = pl.findIntersections(r);
                 count += (listPoints != null ? listPoints.size() : 0);
             }
         }

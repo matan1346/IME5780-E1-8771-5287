@@ -29,6 +29,17 @@ public class Tube extends RadialGeometry {
     }
 
     /**
+     * Constructor that gets color emission of tube, a ray and radius, and sets them
+     * @param _emission Color emission color of tube
+     * @param _ray Ray ray object
+     * @param r double radius value
+     */
+    public Tube(Color _emission, Ray _ray, double r) {
+        this(_ray, r);
+        this._emission = _emission;
+    }
+
+    /**
      * returns the axis ray of the tube
      * @return Ray axis ray of the tube
      */
@@ -85,10 +96,10 @@ public class Tube extends RadialGeometry {
     /**
      * calculate the points of the intersections with the given ray to the tube
      * @param ray Ray which should intersect with the tube
-     * @return List<Point3D> which should return null on none point, or list of points that intersect the tube
+     * @return List<GeoPoint> which should return null on none point, or list of points that intersect the tube
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray) {
         return null;
     }
 }

@@ -10,7 +10,7 @@ import static primitives.Util.*;
  *
  * @author Dan
  */
-public class Polygon implements Geometry {
+public class Polygon extends Geometry {
     /**
      * List of polygon's vertices
      */
@@ -80,6 +80,15 @@ public class Polygon implements Geometry {
         }
     }
 
+    /**
+     * Constructor that gets first a color of emission of polygon and list of points
+     * @param _emission Color emission color of polygon
+     * @param vertices Point3D... list points
+     */
+    public Polygon(Color _emission,Point3D... vertices) {
+        this(vertices);
+        this._emission = _emission;
+    }
     @Override
     public Vector getNormal(Point3D point) {
         return _plane.getNormal();
@@ -88,11 +97,11 @@ public class Polygon implements Geometry {
     /**
      * calculate the points of the intersections with the given ray to the polygon
      * @param ray Ray which should intersect with the plane
-     * @return List<Point3D> which should return null on none point, or list of points that intersect the polygon
+     * @return List<GeoPoint> which should return null on none point, or list of points that intersect the polygon
      */
     @Override
-    public List<Point3D> findIntersections(Ray ray) {
-        List<Point3D> intersections = _plane.findIntersections(ray);
+    public List<GeoPoint> findIntersections(Ray ray) {
+        List<GeoPoint> intersections = _plane.findIntersections(ray);
         if (intersections == null) return null;
 
         Point3D p0 = ray.get_p();

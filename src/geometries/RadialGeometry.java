@@ -7,7 +7,7 @@ import static primitives.Util.isZero;
 /**
  * RadialGeometry abstract class is represents objects with radius
  */
-public abstract class RadialGeometry implements Geometry {
+public abstract class RadialGeometry extends Geometry {
 
     /**
      * the value of the radius
