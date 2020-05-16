@@ -1,9 +1,6 @@
 package geometries;
 
-import primitives.Color;
-import primitives.Point3D;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,15 +24,16 @@ public class Plane extends Geometry {
     Vector normal;
 
     /**
-     * Constructor that gets three points and sets them point and normal vector
-     * Using 3 points to calculate the normal vector
-     * The first point is selected to represents the point position of plane
-     * @param p1 point object represents a point in the plane
-     * @param p2 point object represents a point in the plane
-     * @param p3 point object represents a point in the plane
+     * Constructor that gets emission color, point1, point2 and point3, and sets them
+     * @param emission Color emission color of plane
+     * @param p1 Point3D point 1 object represents a point in the plane
+     * @param p2 Point3D point 2 object represents a point in the plane
+     * @param p3 Point3D point 3 object represents a point in the plane
      */
-    public Plane(Point3D p1,Point3D p2,Point3D p3)
+    public Plane(Color emission, Material material, Point3D p1, Point3D p2, Point3D p3)
     {
+        super(emission, material);
+        //System.ou
         _p = new Point3D(p1);
 
         Vector U = p2.subtract(p1);
@@ -47,16 +45,15 @@ public class Plane extends Geometry {
     }
 
     /**
-     * Constructor that gets emisson color, point1, point2 and point3, and sets them
-     * @param _emission Color emission color of plane
-     * @param p1 Point3D point 1 object represents a point in the plane
-     * @param p2 Point3D point 2 object represents a point in the plane
-     * @param p3 Point3D point 3 object represents a point in the plane
+     * Constructor that gets three points and sets them point and normal vector
+     * Using 3 points to calculate the normal vector
+     * The first point is selected to represents the point position of plane
+     * @param p1 point object represents a point in the plane
+     * @param p2 point object represents a point in the plane
+     * @param p3 point object represents a point in the plane
      */
-    public Plane(Color _emission, Point3D p1, Point3D p2, Point3D p3)
-    {
-        this(p1,p2,p3);
-        this._emission = _emission;
+    public Plane(Point3D p1,Point3D p2,Point3D p3) {
+        this(Color.BLACK, new Material(0,0,0), p1, p2, p3);
     }
 
     /**
@@ -65,6 +62,7 @@ public class Plane extends Geometry {
      * @param _normal normal vector
      */
     public Plane(Point3D _p, Vector _normal) {
+        //TODO maybe we have to fix this constructor to add material as well
         this._p = _p;
         this.normal = _normal;
     }

@@ -1,5 +1,6 @@
 package geometries;
 
+import java.util.LinkedList;
 import java.util.List;
 import primitives.*;
 import static primitives.Util.*;
@@ -19,11 +20,12 @@ public class Polygon extends Geometry {
      * Associated plane in which the polygon lays
      */
     protected Plane _plane;
+    private Color _emission;
 
     /**
      * Polygon constructor based on vertices list. The list must be ordered by edge
      * path. The polygon must be convex.
-     *
+     * @param _emission Color the emission color of the polygon
      * @param vertices list of vertices according to their order by edge path
      * @throws IllegalArgumentException in any case of illegal combination of
      *                                  vertices:
@@ -41,7 +43,10 @@ public class Polygon extends Geometry {
      *                                  <li>The polygon is concave (not convex></li>
      *                                  </ul>
      */
-    public Polygon(Point3D... vertices) {
+    public Polygon(Color _emission, Material _material, Point3D... vertices) {
+        super(_emission, _material);
+        this._emission = _emission;
+        //System.out.println(_emission.getColor());
         if (vertices.length < 3)
             throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
         _vertices = List.of(vertices);
@@ -81,13 +86,12 @@ public class Polygon extends Geometry {
     }
 
     /**
-     * Constructor that gets first a color of emission of polygon and list of points
-     * @param _emission Color emission color of polygon
+     * Constructor that gets list of points
      * @param vertices Point3D... list points
      */
-    public Polygon(Color _emission,Point3D... vertices) {
-        this(vertices);
-        this._emission = _emission;
+    public Polygon(Point3D... vertices) {
+        this(Color.BLACK, new Material(0,0,0),vertices);
+
     }
     @Override
     public Vector getNormal(Point3D point) {
@@ -121,6 +125,12 @@ public class Polygon extends Geometry {
             sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
             if (isZero(sign)) return null;
             if (positive != (sign >0)) return null;
+        }
+
+        //for GeoPoint
+        List<GeoPoint> result = new LinkedList<>();
+        for (GeoPoint geo : intersections) {
+            result.add(new GeoPoint(this, geo.getPoint()));
         }
 
         return intersections;

@@ -1,5 +1,8 @@
 package geometries;
 
+import primitives.Color;
+import primitives.Material;
+
 import java.util.Objects;
 
 import static primitives.Util.isZero;
@@ -13,6 +16,28 @@ public abstract class RadialGeometry extends Geometry {
      * the value of the radius
      */
     protected double _radius;
+
+    /**
+     * Constructor that gets emission color, material and radius value and sets them
+     * @param emission Color emission color
+     * @param material Material of radial geometry
+     * @param radius double radius value
+     */
+    public RadialGeometry(Color emission, Material material, double radius) {
+        super(emission, material);
+        _radius = radius;
+    }
+
+    /**
+     * Constructor that gets emission color and radius value and sets them
+     * @param emission Color emission color
+     * @param radius double radius value
+     */
+    public RadialGeometry(Color emission, double radius) {
+        super(emission);
+        _radius = radius;
+    }
+
 
     /**
      * Constructor that gets radius value and sets it

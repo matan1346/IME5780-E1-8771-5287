@@ -5,6 +5,9 @@ import geometries.Geometries;
 import geometries.Intersectable;
 import primitives.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Scene class the represents the scene and its objects
  */
@@ -40,12 +43,18 @@ public class Scene {
     double _distance;
 
     /**
+     * list of light sources
+     */
+    List<LightSource> _lights;
+
+    /**
      * Constructor that gets scene name and sets it
      * @param _name String scene name
      */
     public Scene(String _name) {
         this._name = _name;
         _geometries = new Geometries();
+        _lights = new LinkedList<LightSource>();
     }
 
     /**
@@ -105,6 +114,14 @@ public class Scene {
     }
 
     /**
+     * Getter that return list of the light sources
+     * @return List<LightSource> list of light sources
+     */
+    public List<LightSource> getLights() {
+        return _lights;
+    }
+
+    /**
      * Setter that sets the background color of the scene
      * @param _background Color background color of the scene
      * @return Scene this object to continue init
@@ -142,5 +159,14 @@ public class Scene {
     public Scene setDistance(double _distance) {
         this._distance = _distance;
         return this;
+    }
+
+    /**
+     * Adding lights to the list of sources
+     * @param lights lights sources
+     */
+    public void addLights(LightSource... lights){
+        for(LightSource l : lights)
+            _lights.add(l);
     }
 }

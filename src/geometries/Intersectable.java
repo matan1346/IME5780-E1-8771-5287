@@ -14,8 +14,8 @@ public interface Intersectable {
      * This class represents the the geometry point
      */
     public static class GeoPoint{
-        public Geometry geometry;
-        public Point3D point;
+        protected final Geometry geometry;
+        protected final Point3D point;
 
         /**
          * Constructor that gets a geometry and point, and sets them
@@ -25,6 +25,14 @@ public interface Intersectable {
         public GeoPoint(Geometry geometry, Point3D point) {
             this.geometry = geometry;
             this.point = new Point3D(point);
+        }
+
+        public Point3D getPoint() {
+            return point;
+        }
+
+        public Geometry getGeometry() {
+            return geometry;
         }
 
         @Override

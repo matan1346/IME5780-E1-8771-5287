@@ -5,12 +5,9 @@ import primitives.Color;
 /**
  * AmbientLight class that represent the light with intensity and Ka
  */
-public class AmbientLight {
+public class AmbientLight extends Light {
 
-    /**
-     * Intensity color
-     */
-    Color _intensity;
+
 
     /**
      * Ka
@@ -23,18 +20,11 @@ public class AmbientLight {
      * @param ka double the number to multiply with color
      */
     public AmbientLight(Color _intensity, double ka) {
-        this._intensity = _intensity;
+        super(_intensity.scale(ka));
         Ka = ka;
     }
 
-    /**
-     * Getter that return the intensity of the color
-     * @return Color the intensity of the color
-     */
-    public Color getIntensity()
-    {
-        return _intensity;
-    }
+
 
 
 }
