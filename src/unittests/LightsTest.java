@@ -180,13 +180,12 @@ public class LightsTest {
         scene.setAmbientLight(new AmbientLight(Color.BLACK, 0));
 
         scene.addGeometries(
-                new Sphere(new Color(java.awt.Color.RED), new Material(0.8, 0.5, 100),  new Point3D(0, 0, 50), 50));
+                new Sphere(new Color(java.awt.Color.GRAY), new Material(0.3, 0.5, 200),  new Point3D(0, 0, 50), 50));
 
-        scene.addLights(new DirectionalLight(new Color(500, 300, 0), new Vector(1, -1, 1)));
-        scene.addLights(new DirectionalLight(new Color(200, 500, 0), new Vector(-1, 1, -1)));
+        scene.addLights(new DirectionalLight(new Color(java.awt.Color.MAGENTA), new Vector(-1, 1, -1)));
 
-        scene.addLights(new SpotLight(new Color(300, 300, 0), new Point3D(-50, 50, -50),
-                1, 0.5,0.5, new Vector(1,-1,2)));
+        scene.addLights(new SpotLight(new Color(java.awt.Color.BLUE), new Point3D(-60, 80, -30),
+                1, 0.00005,0.00005, new Vector(1, -1, 2)));
 
         ImageWriter imageWriter = new ImageWriter("sphereMultiLights", 150, 150, 500, 500);
         Render render = new Render(imageWriter, scene);
