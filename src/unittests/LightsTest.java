@@ -167,4 +167,63 @@ public class LightsTest {
         render.writeToImage();
     }
 
+
+    /**
+     * Produce a picture of a sphere lighted by multi lights
+     */
+    @Test
+    public void sphereMultiLights() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(Color.BLACK, 0));
+
+        scene.addGeometries(
+                new Sphere(new Color(java.awt.Color.RED), new Material(0.8, 0.5, 100),  new Point3D(0, 0, 50), 50));
+
+        scene.addLights(new DirectionalLight(new Color(500, 300, 0), new Vector(1, -1, 1)));
+        scene.addLights(new DirectionalLight(new Color(200, 500, 0), new Vector(-1, 1, -1)));
+
+        scene.addLights(new SpotLight(new Color(300, 300, 0), new Point3D(-50, 50, -50),
+                1, 0.5,0.5, new Vector(1,-1,2)));
+
+        ImageWriter imageWriter = new ImageWriter("sphereMultiLights", 150, 150, 500, 500);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
+    /**
+     * Produce a picture of a two triangles lighted by multi lights
+     */
+    @Test
+    public void triangleMultiLights() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+
+        scene.addGeometries(
+                new Triangle(new Color(java.awt.Color.GRAY), new Material(0.5, 0.2, 500),
+                        new Point3D(-150, 150, 150), new Point3D(150, 150, 150), new Point3D(75, -75, 150)),
+                new Triangle(new Color(java.awt.Color.GRAY), new Material(0.7, 0.8, 300),
+                        new Point3D(-150, 150, 150), new Point3D(-70, -70, 50), new Point3D(75, -75, 150)));
+
+        scene.addLights(new SpotLight(new Color(java.awt.Color.magenta),
+                new Point3D(-40, 80, -100),
+                1, 0.0001, 0.00001, new Vector(-2, 2, 1)));
+        scene.addLights(new PointLight(new Color(500, 0, 0),
+                new Point3D(90, -20, 100),
+                1, 0.0001, 0.001));
+
+        ImageWriter imageWriter = new ImageWriter("trianglesMultiLights", 200, 200, 500, 500);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
 }
