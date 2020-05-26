@@ -49,11 +49,11 @@ public class Geometries implements Intersectable {
      * @return List<GeoPoint> which should return null on none point, or list of points that intersect the geometries
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
         List<GeoPoint> intersections = null;
 
         for (Intersectable geo : _geometries) {
-            List<GeoPoint> tempIntersections = geo.findIntersections(ray);
+            List<GeoPoint> tempIntersections = geo.findIntersections(ray, max);
             if (tempIntersections != null) {
                 if (intersections == null)
                     intersections = new ArrayList<GeoPoint>();

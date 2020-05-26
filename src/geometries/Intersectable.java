@@ -55,7 +55,16 @@ public interface Intersectable {
      * @param ray Ray which should intersect with the geometry
      * @return List<GeoPoint> which should return null on none point, or list of points that intersect the geometry
      */
-    List<GeoPoint> findIntersections(Ray ray);
+    default List<GeoPoint> findIntersections(Ray ray){
+        return findIntersections(ray, Double.POSITIVE_INFINITY);
+    }
 
+    /**
+     * calculate the points of the intersections with the given ray to the geometry
+     * @param ray Ray which should intersect with the geometry
+     * @param max double the maximum distance
+     * @return List<GeoPoint> which should return null on none point, or list of points that intersect the geometry
+     */
+    List<GeoPoint> findIntersections(Ray ray, double max);
 
 }

@@ -107,7 +107,7 @@ public class Cylinder extends Tube {
      * @return List<Point3D> which should return null on none point, or list of points that intersect the cylinder
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
-        return super.findIntersections(ray);
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
+        return super.findIntersections(ray, max);
     }
 }

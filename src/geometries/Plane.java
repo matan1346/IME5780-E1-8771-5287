@@ -121,7 +121,7 @@ public class Plane extends Geometry {
      * @return List<GeoPoint> which should return null on none point, intersect of 1 point which intersect the plane
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
         Vector p0Q;
         try {
             p0Q = _p.subtract(ray.get_p());
@@ -135,7 +135,8 @@ public class Plane extends Geometry {
 
         double t = alignZero(normal.dotProduct(p0Q) / nv);
 
-        if (t <= 0) {
+
+        if (t <= 0 || alignZero(max - t) <= 0) {
             return null;
         }
 

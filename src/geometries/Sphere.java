@@ -3,6 +3,7 @@ package geometries;
 import primitives.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -113,7 +114,7 @@ public class Sphere extends RadialGeometry {
      * @return List<GeoPoint> which should return null on none point, or list of points that intersect the sphere
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
         Point3D p0 = ray.get_p();
         Vector v = ray.get_dir();
         Vector u;
@@ -133,12 +134,30 @@ public class Sphere extends RadialGeometry {
 
         double t1 = alignZero(tm - th);
         double t2 = alignZero(tm + th);
-        if (t1 <= 0 && t2 <= 0) return null;
-        if (t1 > 0 && t2 > 0) return List.of(new GeoPoint(this, ray.getTargetPoint(t1)),
-                new GeoPoint(this, ray.getTargetPoint(t2))); //P1 , P2
+
+        double t1MaxDistance = alignZero(max-t1);
+        double t2MaxDistance = alignZero(max-t2);
+
+        //if (t1 <= 0 && t2 <= 0) return null;
+
+        List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+        if (t1 > 0 && t1MaxDistance > 0)//if t1 and distance of t1 positive
+            geoPoints.add(new GeoPoint(this, ray.getTargetPoint(t1)));
+        if (t2 > 0 && t2MaxDistance > 0)//if t1 and distance of t2 positive
+            geoPoints.add(new GeoPoint(this, ray.getTargetPoint(t2)));
+
+        //return geo points if exists or null otherwise
+        return geoPoints.size() > 0 ? geoPoints : null;
+        /*
+        if (t1 > 0 && t2 > 0){
+
+            if(t1MaxDistance > 0 && t2MaxDistance > 0)
+                return List.of(new GeoPoint(this, ray.getTargetPoint(t1)),
+                        new GeoPoint(this, ray.getTargetPoint(t2))); //P1 , P2
+        }
         if (t1 > 0)
             return List.of(new GeoPoint(this, ray.getTargetPoint(t1)));
         else
-            return List.of(new GeoPoint(this ,ray.getTargetPoint(t2)));
+            return List.of(new GeoPoint(this ,ray.getTargetPoint(t2)));*/
     }
 }

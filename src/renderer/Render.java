@@ -17,6 +17,12 @@ import static primitives.Util.alignZero;
  * Render class that set the scene and the image writer and rendering
  */
 public class Render {
+
+    /**
+     * delta value
+     */
+    private static final double DELTA = 0.1;
+
     /**
      * ImageWrite object that represents the image
      */
@@ -120,34 +126,36 @@ public class Render {
 
     /**
      * Calculating the color by a Point
-     * @param p Point3D the point that in the calculation
+     * @param gp Point3D the point that in the calculation
      * @return Color new color after calculation
      */
-    public Color calcColor(GeoPoint p){
+    public Color calcColor(GeoPoint gp){
         Color result = _scene.getAmbientLight().getIntensity();
-        result = result.add(p.getGeometry().getEmission());
+        result = result.add(gp.getGeometry().getEmission());
         List<LightSource> lights = _scene.getLights();
 
-        Vector v = p.getPoint().subtract(_scene.getCamera().getP0()).normalize();
-        Vector n = p.getGeometry().getNormal(p.getPoint());
+        Vector v = gp.getPoint().subtract(_scene.getCamera().getP0()).normalize();
+        Vector n = gp.getGeometry().getNormal(gp.getPoint());
 
-        Material material = p.getGeometry().getMaterial();
+        Material material = gp.getGeometry().getMaterial();
         int nShininess = material.getnShininess();
         double kd = material.getkD();
         double ks = material.getkS();
         if (_scene.getLights() != null) {
             for (LightSource lightSource : lights) {
 
-                Vector l = lightSource.getL(p.getPoint());
+                Vector l = lightSource.getL(gp.getPoint());
                 double nl = alignZero(n.dotProduct(l));
                 double nv = alignZero(n.dotProduct(v));
 
                 if (sign(nl) == sign(nv)) {
-                    Color ip = lightSource.getIntensity(p.getPoint());
-                    result = result.add(
-                            calcDiffusive(kd, nl, ip),
-                            calcSpecular(ks, l, n, nl, v, nShininess, ip)
-                    );
+                    if(unshaded(l, n, gp, lightSource)) {
+                        Color ip = lightSource.getIntensity(gp.getPoint());
+                        result = result.add(
+                                calcDiffusive(kd, nl, ip),
+                                calcSpecular(ks, l, n, nl, v, nShininess, ip)
+                        );
+                    }
                 }
             }
         }
@@ -208,6 +216,24 @@ public class Render {
     }
 
 
+    /**
+     * Check if given vectors with geo point is unshaded
+     * @param l Vector light source vector
+     * @param n Vector normalized vector of the geo point
+     * @param gp GeoPoint the geo point
+     * @return boolean true if unshaded, else otherwise
+     */
+    private boolean unshaded(Vector l, Vector n, GeoPoint gp, LightSource lightSource)
+    {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Vector delta = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : - DELTA);
+        Point3D point = gp.getPoint().add(delta);
+        Ray lightRay = new Ray(point, lightDirection);
+        List<GeoPoint> intersections = _scene.getGeometries().findIntersections(
+                                                lightRay,
+                                                lightSource.getDistance(point));
+        return intersections == null;
+    }
 
 
 }

@@ -104,8 +104,8 @@ public class Polygon extends Geometry {
      * @return List<GeoPoint> which should return null on none point, or list of points that intersect the polygon
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
-        List<GeoPoint> intersections = _plane.findIntersections(ray);
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
+        List<GeoPoint> intersections = _plane.findIntersections(ray, max);
         if (intersections == null) return null;
 
         Point3D p0 = ray.get_p();

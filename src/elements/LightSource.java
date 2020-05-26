@@ -22,4 +22,11 @@ public interface LightSource {
     public Vector getL(Point3D p);
 
 
+    /**
+     * Calculate the distance of point with light source
+     * @param p Point3D point to calculate the distance with
+     * @return double distance of point with light source
+     */
+    public double getDistance(Point3D p);
+
 }

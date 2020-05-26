@@ -99,7 +99,7 @@ public class Tube extends RadialGeometry {
      * @return List<GeoPoint> which should return null on none point, or list of points that intersect the tube
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray) {
+    public List<GeoPoint> findIntersections(Ray ray, double max) {
         return null;
     }
 }
