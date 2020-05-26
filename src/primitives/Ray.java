@@ -17,22 +17,31 @@ public class Ray {
      */
     private Vector _dir;
 
-    /*public Ray(Point3D point, Vector direction, Vector normal) {
-        //head+ normal.scale(±DELTA)
+    /**
+     * DELTA VALUE
+     */
+    private static final double DELTA = 0.1;
+
+    /**
+     * Constructor that gets a point, a direction vector and normal vector and sets them
+     * @param point Point3D point object represents the header of the Ray
+     * @param direction Vector direction vector object represents the direction vector of the Ray
+     * @param normal Vector normal vector object represents the normal vector of the Ray
+     */
+    public Ray(Point3D point, Vector direction, Vector normal) {
         _dir = new Vector(direction).normalized();
 
         double nv = normal.dotProduct(direction);
 
         Vector normalDelta = normal.scale((nv > 0 ? DELTA : -DELTA));
         _p = point.add(normalDelta);
-
-    }*/
+    }
 
 
     /**
      * Constructor that gets a point and a vector and sets them
-     * @param _p point object represents the header of the Ray
-     * @param _dir vector object represents the vector of the Ray
+     * @param _p Point3D point object represents the header of the Ray
+     * @param _dir Vector vector object represents the vector of the Ray
      */
     public Ray(Point3D _p, Vector _dir) throws IllegalArgumentException {
         this._p = new Point3D(_p);
@@ -46,6 +55,7 @@ public class Ray {
     public Ray(Ray r) {
         this(r._p, r._dir);
     }
+
 
     /**
      * returns the point header of the ray
