@@ -24,6 +24,17 @@ public class Render {
     private static final double DELTA = 0.1;
 
     /**
+     * Stopping condition of shkifut
+     */
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+
+    /**
+     * Stopping condition of eshtakfut
+     */
+    private static final double MIN_CALC_COLOR_K = 0.001;
+
+
+    /**
      * ImageWrite object that represents the image
      */
     ImageWriter _imageWriter;
@@ -235,5 +246,26 @@ public class Render {
         return intersections == null;
     }
 
+    /**
+     *
+     * @param p
+     * @param r
+     * @param v
+     * @return
+     */
+    public Ray constructedReflectedRay(Point3D p, Ray ray, Vector n){
+
+        Vector v = ray.get_dir();
+        double vn = v.dotProduct(n);
+
+        if(vn == 0) return null;
+
+        Vector r = v.subtract(n.scale(2*vn));
+
+        //return new Ray(p, ray, n);
+
+
+        return null;
+    }
 
 }

@@ -17,6 +17,18 @@ public class Ray {
      */
     private Vector _dir;
 
+    /*public Ray(Point3D point, Vector direction, Vector normal) {
+        //head+ normal.scale(±DELTA)
+        _dir = new Vector(direction).normalized();
+
+        double nv = normal.dotProduct(direction);
+
+        Vector normalDelta = normal.scale((nv > 0 ? DELTA : -DELTA));
+        _p = point.add(normalDelta);
+
+    }*/
+
+
     /**
      * Constructor that gets a point and a vector and sets them
      * @param _p point object represents the header of the Ray
