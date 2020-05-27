@@ -60,7 +60,7 @@ public class SphereTest {
         // ============ Equivalence Partitions Tests ==============
         Point3D p1 = new Point3D(0.0651530771650466, 0.355051025721682, 0);
         Point3D p2 = new Point3D(1.53484692283495, 0.844948974278318, 0);
-        List<Point3D> exp = List.of(p1, p2);
+        List<GeoPoint> exp = List.of(new GeoPoint(sphere, p1), new GeoPoint(sphere, p2));
 
         // TC01: Ray's line is outside the sphere (0 points)
         assertNull("Ray's line out of sphere" , sphere.findIntersections(new Ray(new Point3D(-1, 0, 0), new Vector(1, 1, 0))));

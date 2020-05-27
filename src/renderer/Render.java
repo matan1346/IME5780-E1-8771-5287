@@ -207,8 +207,9 @@ public class Render {
                 double nv = alignZero(n.dotProduct(v));
 
                 if (sign(nl) == sign(nv)) {
-                    if (unshaded(l, n, gp, lightSource)) {
-                        Color ip = lightSource.getIntensity(gp.getPoint());
+                    double ktr = transparency(l,n,gp,lightSource);
+                    if (ktr * k > MIN_CALC_COLOR_K) {
+                        Color ip = lightSource.getIntensity(gp.getPoint()).scale(ktr);
                         result = result.add(
                                 calcDiffusive(kd, nl, ip),
                                 calcSpecular(ks, l, n, nl, v, nShininess, ip)
@@ -222,12 +223,10 @@ public class Render {
             if (kkR > MIN_CALC_COLOR_K) {
                 Ray reflectedRay = constructReflectedRay(gp.getPoint(), inRay, n);
                 GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
-                if (reflectedPoint != null) result.add(
+                if (reflectedPoint != null) result = result.add(
                         calcColor(reflectedPoint,
                                 reflectedRay,
                                 level - 1, kkR).scale(kR));
-
-
             }
 
             double kT = gp.getGeometry().getMaterial().getKT();
@@ -235,24 +234,17 @@ public class Render {
             if (kkT > MIN_CALC_COLOR_K) {
                 Ray refractedRay = constructRefractedRay(gp.getPoint(), inRay, n);
                 GeoPoint refractedPoint = findClosestIntersection(refractedRay);
-                if (refractedPoint != null) result.add(
+                if (refractedPoint != null) result = result.add(
                         calcColor(refractedPoint,
                                 refractedRay,
                                 level - 1, kkT).scale(kT));
-
-
             }
         }
 
         return result;
     }
 
-    /**
-     * Calculating the color by a Point
-     *
-     * @param gp Point3D the point that in the calculation
-     * @return Color new color after calculation
-     */
+
     /*public Color calcColor(GeoPoint gp) {
         Color result = _scene.getAmbientLight().getIntensity();
         result = result.add(gp.getGeometry().getEmission());
@@ -368,6 +360,34 @@ public class Render {
     }
 
     /**
+     *
+     * @param l
+     * @param n
+     * @param gp
+     * @param lightSource
+     * @return
+     */
+    private double transparency(Vector l, Vector n, GeoPoint gp, LightSource lightSource) {
+        Vector lightDirection = l.scale(-1); // from point to light source
+
+        Point3D point = gp.getPoint();// get one for fast performance
+
+        Ray lightRay = new Ray(point, lightDirection, n);
+        List<GeoPoint> intersections = _scene.getGeometries().findIntersections(lightRay);
+        if (intersections == null) return 1.0;
+        double lightDistance = lightSource.getDistance(point);
+        double ktr = 1.0;
+        for (GeoPoint geoP : intersections) {
+            if (alignZero(geoP.getPoint().distance(point) - lightDistance) <= 0) {
+                ktr *= geoP.getGeometry().getMaterial().getKT();
+                if (ktr < MIN_CALC_COLOR_K) return 0.0;
+            }
+        }
+        return ktr;
+
+    }
+
+    /**
      * this function gets a point, a ray and a vector and return the reflected ray
      *
      * @param p   Point3D point
@@ -382,7 +402,7 @@ public class Render {
 
         if (vn == 0) return null;
 
-        Vector r = v.subtract(n.scale(2 * vn));
+        Vector r = n.scale(2 * vn).subtract(v);
         return new Ray(p, r, n);
     }
 

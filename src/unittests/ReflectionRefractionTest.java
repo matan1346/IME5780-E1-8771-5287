@@ -3,6 +3,7 @@
  */
 package unittests;
 
+import geometries.Plane;
 import org.junit.Test;
 
 import elements.*;
@@ -20,6 +21,40 @@ import scene.Scene;
  *
  */
 public class ReflectionRefractionTest {
+
+
+
+
+    @Test
+    public void specialCreationGeometriesTest() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(Color.BLACK, 0));
+
+        scene.addGeometries(
+                new Plane(new Color(java.awt.Color.BLUE),new Material(0.4, 0.3, 100, 0.3, 0),
+                        new Point3D(50,-50,60), new Point3D(50,50,60), new Point3D(-100,0,100))
+                //new Sphere(new Color(java.awt.Color.BLUE), new Material(0.4, 0.3, 100, 0.3, 0), new Point3D(0, 0, 50), 50),
+                //new Sphere(new Color(java.awt.Color.RED), new Material(0.5, 0.5, 100), new Point3D(0, 0, 50), 25)
+                );
+
+        scene.addGeometries(new Triangle(new Color(java.awt.Color.GREEN), new Material(0.5,0.5,120, 0.6,0.6),
+                new Point3D(-50,-50,100), new Point3D(-50,50,100), new Point3D(10,0,-100)));
+
+        scene.addLights(new SpotLight(new Color(1000, 600, 0), new Point3D(-100, 100, -500), 1,
+                0.0004, 0.0000006, new Vector(-1, 1, 2)));
+
+        ImageWriter imageWriter = new ImageWriter("specialCreationGeometries", 150, 150, 500, 500);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
+
+
 
     /**
      * Produce a picture of a sphere lighted by a spot light
