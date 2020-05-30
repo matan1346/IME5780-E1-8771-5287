@@ -52,7 +52,7 @@ public class GeometriesTest {
         assertEquals("ERROR - some geometries but not all of them has intersections   " ,
                 new ArrayList<GeoPoint>(
                 Arrays.asList(
-                        new GeoPoint(triangle, new Point3D(0.006246096189881811,-0.4896939412866957,3.0081199250468456)),
+                        new GeoPoint(plane, new Point3D(0.006246096189881811,-0.4896939412866957,3.0081199250468456)),
                         new GeoPoint(triangle, new Point3D(-0.4918032786885256,-0.5140983606557377,3.1580327868852462)))),
 
                 geometries.findIntersections(new Ray(new Point3D(10,0,0),new Vector(-10,-0.49,3.01))));
@@ -60,16 +60,19 @@ public class GeometriesTest {
 
         //---------------BVA------ ALL GEOMETRIES HAS INTERSECTIONS
         Geometries geometries2 = new Geometries();
-        geometries2.add(new Plane(new Point3D(0,1,0), new Point3D(1,0,0), new Point3D(0,0,1)),
-                new Triangle(new Point3D(3,0,0) ,new Point3D(0,0,3), new Point3D(0,3,0)),
-                new Triangle(new Point3D(0,-5,0) ,new Point3D(0,0,5), new Point3D(-5,0,0)));
+
+        Plane plane2 = new Plane(new Point3D(0,1,0), new Point3D(1,0,0), new Point3D(0,0,1));
+        Triangle triangle2 = new Triangle(new Point3D(3,0,0) ,new Point3D(0,0,3), new Point3D(0,3,0));
+        Triangle triangle3 = new Triangle(new Point3D(0,-5,0) ,new Point3D(0,0,5), new Point3D(-5,0,0));
+
+        geometries2.add(plane2, triangle2, triangle3);
         assertEquals("ERROR - all the geometries has intersections   " ,
 
                 new ArrayList<GeoPoint>(
                         Arrays.asList(
-                                new GeoPoint(plane, new Point3D(0.2892421441774484, -0.3424768946395571, 1.0532347504621073)),
-                                new GeoPoint(plane, new Point3D(1.4759334565619229, 0.7554898336414051, 0.7685767097966727)),
-                                new GeoPoint(plane, new Point3D(-1.509064748201438, -2.0063309352517984, 1.4846043165467624)))),
+                                new GeoPoint(plane2, new Point3D(0.2892421441774484, -0.3424768946395571, 1.0532347504621073)),
+                                new GeoPoint(triangle2, new Point3D(1.4759334565619229, 0.7554898336414051, 0.7685767097966727)),
+                                new GeoPoint(triangle3, new Point3D(-1.509064748201438, -2.0063309352517984, 1.4846043165467624)))),
 
                 geometries2.findIntersections(new Ray(new Point3D(4.68,3.72,0), new Vector(-3.21,-2.97,0.77))));
 

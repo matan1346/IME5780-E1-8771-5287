@@ -197,8 +197,8 @@ public class Render {
 
         Material material = gp.getGeometry().getMaterial();
         int nShininess = material.getnShininess();
-        double kd = material.getkD();
-        double ks = material.getkS();
+        double kd = material.getKD();
+        double ks = material.getKS();
         if (_scene.getLights() != null) {
             for (LightSource lightSource : lights) {
 

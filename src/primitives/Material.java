@@ -6,7 +6,7 @@ package primitives;
 public class Material {
 
     /**
-     * kT - shkifut,kR - ishtakfut
+     * kT - transparency value,kR - reflection value
      */
     double kT, kR;
 
@@ -31,12 +31,12 @@ public class Material {
     }
 
     /**
-     * Constructor that gets 2 numbers to scale with and shininess, and shkifut and eshtakfut, and sets them
+     * Constructor that gets 2 numbers to scale with and shininess, and transparency and reflection, and sets them
      * @param kD double number one st scale
      * @param kS double number two st scale
      * @param nShininess int number
-     * @param kT double shkifut value
-     * @param kR double eshtakfut value
+     * @param kT double transparency value
+     * @param kR double reflection value
      */
     public Material(double kD, double kS, int nShininess, double kT, double kR) {
         this.kD = kD;
@@ -46,10 +46,10 @@ public class Material {
         this.kR = kR;
     }
     /**
-     * Getter thatreturn the number of kD
+     * Getter that return the number of kD
      * @return double kD
      */
-    public double getkD() {
+    public double getKD() {
         return kD;
     }
 
@@ -57,7 +57,7 @@ public class Material {
      * Getter that return the number of kS
      * @return double kS
      */
-    public double getkS() {
+    public double getKS() {
         return kS;
     }
 
@@ -70,16 +70,16 @@ public class Material {
     }
 
     /**
-     * Getter that return the shkifut value
-     * @return double shkifut
+     * Getter that return the transparency value
+     * @return double transparency
      */
     public double getKT() {
         return kT;
     }
 
     /**
-     * Getter that return the ehstakfut value
-     * @return double ehstakfut
+     * Getter that return the reflection value
+     * @return double reflection
      */
     public double getKR() {
         return kR;

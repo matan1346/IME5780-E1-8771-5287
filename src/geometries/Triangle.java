@@ -112,7 +112,6 @@ public class Triangle extends Polygon {
             }
             return result;
         }
-
         return null;
     }
 }

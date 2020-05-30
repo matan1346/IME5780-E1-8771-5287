@@ -138,8 +138,6 @@ public class Sphere extends RadialGeometry {
         double t1MaxDistance = alignZero(max-t1);
         double t2MaxDistance = alignZero(max-t2);
 
-        //if (t1 <= 0 && t2 <= 0) return null;
-
         List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
         if (t1 > 0 && t1MaxDistance > 0)//if t1 and distance of t1 positive
             geoPoints.add(new GeoPoint(this, ray.getTargetPoint(t1)));
@@ -148,16 +146,5 @@ public class Sphere extends RadialGeometry {
 
         //return geo points if exists or null otherwise
         return geoPoints.size() > 0 ? geoPoints : null;
-        /*
-        if (t1 > 0 && t2 > 0){
-
-            if(t1MaxDistance > 0 && t2MaxDistance > 0)
-                return List.of(new GeoPoint(this, ray.getTargetPoint(t1)),
-                        new GeoPoint(this, ray.getTargetPoint(t2))); //P1 , P2
-        }
-        if (t1 > 0)
-            return List.of(new GeoPoint(this, ray.getTargetPoint(t1)));
-        else
-            return List.of(new GeoPoint(this ,ray.getTargetPoint(t2)));*/
     }
 }
