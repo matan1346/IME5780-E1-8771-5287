@@ -1,6 +1,6 @@
 package elements;
 
-
+import java.util.Random;
 import primitives.*;
 
 import java.util.Map;
@@ -30,6 +30,8 @@ public class Camera {
      * Vector the right vector of the camera
      */
     private Vector _Vright;
+
+    private Random rand = new Random();
 
     /**
      * Constructor that gets a point, and 2 vectors of to and up and sets them
@@ -82,18 +84,25 @@ public class Camera {
      * @param screenDistance double screen distance
      * @param screenWidth double screen width
      * @param screenHeight double screen height
+     * @param isRandom boolean true of random, else center
      * @return Ray the construct ray in the position i,j with this view plane
      */
     public Ray constructRayThroughPixel (int nX, int nY,
                                          int j, int i, double screenDistance,
-                                         double screenWidth, double screenHeight)
+                                         double screenWidth, double screenHeight, boolean isRandom)
     {
         Point3D Pc = _p0.add(_Vto.scale(screenDistance));
         double Ry = screenHeight / nY;
         double Rx = screenWidth / nX;
 
-        double Yi = (i - nY/2d)*Ry + Ry/2d;
-        double Xj = (j - nX/2d)*Rx + Rx/2d;
+        int intRy = (int)Ry;
+        int intRx = (int)Rx;
+
+        //if isRandom is true, than calculate random Ry,Rx, else calculate center
+        double calcRy = (isRandom ? rand.nextDouble() + rand.nextInt(intRy <= 0 ? 1 : intRy ) : Ry/2d);
+        double calcRx = (isRandom ? rand.nextDouble() + rand.nextInt(intRx <= 0 ? 1 : intRx ) : Rx/2d);
+        double Yi = (i - nY/2d)*Ry + calcRy;
+        double Xj = (j - nX/2d)*Rx + calcRx;
 
 
         Point3D Pij = Pc;
@@ -108,6 +117,32 @@ public class Camera {
 
         return new Ray(_p0, Vij.normalize());
     }
+
+
+    /**
+     * Gets the layout of the view plane, with units of width, height and positions
+     * @param nX int width per item
+     * @param nY int height per item
+     * @param j int the position of the column
+     * @param i int the position of thr row
+     * @param screenDistance double screen distance
+     * @param screenWidth double screen width
+     * @param screenHeight double screen height
+     * @return Ray the construct ray in the position i,j with this view plane
+     */
+    public Ray constructRayThroughPixel (int nX, int nY,
+                                         int j, int i, double screenDistance,
+                                         double screenWidth, double screenHeight) {
+        return constructRayThroughPixel(nX,nY,j,i,screenDistance,screenWidth,screenHeight, false);
+    }
+
+
+
+
+
+
+
+
 
     /**
      * Getter that gets the center point of the camera

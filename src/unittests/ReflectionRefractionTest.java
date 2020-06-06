@@ -23,10 +23,55 @@ import scene.Scene;
 public class ReflectionRefractionTest {
 
 
-
-
     @Test
     public void specialCreationGeometriesTest() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(new Color(java.awt.Color.BLACK));
+        scene.setAmbientLight(new AmbientLight(Color.BLACK, 0));
+
+
+        Point3D p1 = new Point3D(300,100,6000);
+        Point3D p2 = new Point3D(0,-200,6000);
+
+
+        Vector v1 = p1.subtract(p2);
+
+        //Vector vSub =
+
+        scene.addGeometries(
+                //new Sphere(new Color(java.awt.Color.YELLOW), new Material(0.8, 0.2, 200, 0, 0), new Point3D(300, 0, 3000), 80),
+                new Triangle(new Color(java.awt.Color.BLACK), new Material(0.5,0,60,0.5,0),
+                        new Point3D(-300,100,6000), new Point3D(300,100,6000), new Point3D(0,-200,6000)),
+                new Triangle(new Color(java.awt.Color.BLACK), new Material(0.5,0,60,0.5,0),
+                        new Point3D(0,200,6000), new Point3D(-300,-100,6000), new Point3D(300,-100,6000)),
+                new Triangle(new Color(java.awt.Color.YELLOW), new Material(0.1,0,0,0,0.9),
+                        new Point3D(-150,50,8000), new Point3D(150,50,8000), new Point3D(0,-100,8000)),
+                new Triangle(new Color(java.awt.Color.YELLOW), new Material(0.1,0,0,0,0.9),
+                        new Point3D(0,100,8000), new Point3D(-150,-50,8000), new Point3D(150,-50,8000)),
+                new Sphere(new Color(java.awt.Color.BLUE), new Material(0.2, 0.2, 30, 0.6, 0),
+                        new Point3D(20, -30, 200), 30)
+
+        );
+//        new Color(1000, 600, 0)
+        scene.addLights(/*new SpotLight(new Color(java.awt.Color.YELLOW), new Point3D(200, -100, -500), 1,
+                0.0004, 0.0000006, new Vector(-1, 1, 2)),*/
+                new SpotLight(new Color(java.awt.Color.YELLOW), new Point3D(500, 100, 2000), 1,
+                        0.0004, 0.0000006, new Vector(-1,1,2)),
+                new SpotLight(new Color(700, 400, 400),
+                        new Point3D(60, -50, 0), 1, 4E-5, 2E-7, new Vector(0, 0, 1))/*,
+                new DirectionalLight(new Color(java.awt.Color.YELLOW), new Vector(-1, 1, 2))*/);
+
+        ImageWriter imageWriter = new ImageWriter("specialCreationGeometries", 150, 150, 500, 500);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
+    @Test
+    public void specialCreationGeometriesTest2() {
         Scene scene = new Scene("Test scene");
         scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
         scene.setDistance(1000);
@@ -46,7 +91,7 @@ public class ReflectionRefractionTest {
         scene.addLights(new SpotLight(new Color(1000, 600, 0), new Point3D(-100, 100, -500), 1,
                 0.0004, 0.0000006, new Vector(-1, 1, 2)));
 
-        ImageWriter imageWriter = new ImageWriter("specialCreationGeometries", 150, 150, 500, 500);
+        ImageWriter imageWriter = new ImageWriter("specialCreationGeometries2", 150, 150, 500, 500);
         Render render = new Render(imageWriter, scene);
 
         render.renderImage();

@@ -20,7 +20,6 @@ public class Polygon extends Geometry {
      * Associated plane in which the polygon lays
      */
     protected Plane _plane;
-    private Color _emission;
 
     /**
      * Polygon constructor based on vertices list. The list must be ordered by edge
@@ -45,15 +44,14 @@ public class Polygon extends Geometry {
      */
     public Polygon(Color _emission, Material _material, Point3D... vertices) {
         super(_emission, _material);
-        this._emission = _emission;
-        //System.out.println(_emission.getColor());
+
         if (vertices.length < 3)
             throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
         _vertices = List.of(vertices);
         // Generate the plane according to the first three vertices and associate the
         // polygon with this plane.
         // The plane holds the invariant normal (orthogonal unit) vector to the polygon
-        _plane = new Plane(vertices[0], vertices[1], vertices[2]);
+        _plane = new Plane(_emission, _material,vertices[0], vertices[1], vertices[2]);
         if (vertices.length == 3) return; // no need for more tests for a Triangle
 
         Vector n = _plane.getNormal();

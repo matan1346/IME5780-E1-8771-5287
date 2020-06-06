@@ -1,75 +1,54 @@
 package geometries;
 
-
+//import elements.Material;
 import primitives.*;
 
 import java.util.List;
-import java.util.Objects;
 
-
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
- * Tube class represents a tube in 3D dimension
+ * Represents an infinite tube in the 3D space.
+ * That is, the cylinder does not have a length.
  */
+
 public class Tube extends RadialGeometry {
-    /**
-     * Ray that represents the start position and the direction of the tube
-     */
-    Ray _axisRay;
 
     /**
-     * Constructor that gets a ray and radius value and sets them
-     * @param _ray ray object
-     * @param r radius value
+     * represents the direction and the reference point
      */
-    public Tube(Ray _ray, double r) {
-        super(r);
-        this._axisRay = _ray;
+    protected final Ray _axisRay;
+
+    /**
+     * constructor for a new Cylinder object
+     *
+     * @param _radius       the radius of the tube
+     * @param _ray          the direction of the tube from the referenced point
+     * @param _material     the material of the tube
+     * @param emissionLight the emission light of the tube
+     * throws Exception in case of negative or zero radius from RadialGeometry constructor
+     */
+    public Tube(Color emissionLight, Material _material, double _radius, Ray _ray) {
+        super(Color.BLACK, _radius);
+        this._material = _material;
+        this._axisRay = new Ray(_ray);
+
     }
 
-    /**
-     * Constructor that gets color emission of tube, a ray and radius, and sets them
-     * @param _emission Color emission color of tube
-     * @param _ray Ray ray object
-     * @param r double radius value
-     */
-    public Tube(Color _emission, Ray _ray, double r) {
-        this(_ray, r);
-        this._emission = _emission;
+    public Tube(double _radius, Ray _ray) {
+        this(Color.BLACK, new Material(0, 0, 0), _radius, _ray);
     }
 
-    /**
-     * returns the axis ray of the tube
-     * @return Ray axis ray of the tube
-     */
-    public Ray get_ray() {
+    public Tube(Color emissionLight, double _radius, Ray _ray) {
+        this(emissionLight, new Material(0, 0, 0), _radius, _ray);
+    }
+
+    public Ray getRay() {
         return _axisRay;
     }
 
-    /**
-     * Calculating the normal vector of the Tube in specific point
-     * @param p point object
-     * @return new vector that is normal to that tube
-     */
-    public Vector getNormal(Point3D p) {
-        //The vector from the point of the cylinder to the given point
-        Point3D o = _axisRay.get_p();
-        Vector v = _axisRay.get_dir();
 
-        Vector vector1 = p.subtract(o);
-
-        //We need the projection to multiply the _direction unit vector
-        double projection = vector1.dotProduct(v);
-        if (!isZero(projection)) {
-            // projection of P-O on the ray:
-            o.add(v.scale(projection));
-        }
-
-        //This vector is orthogonal to the _direction vector.
-        Vector check = p.subtract(o);
-        return check.normalize();
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -81,25 +60,82 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), _axisRay);
-    }
-
-    @Override
     public String toString() {
-        return "Tube {\n" +
-                "\t" + _axisRay +
-                "\n\t" + super.toString() +
-                "\n}";
+        return "ray: " + _axisRay +
+                ", radius: " + _radius;
     }
 
     /**
-     * calculate the points of the intersections with the given ray to the tube
-     * @param ray Ray which should intersect with the tube
-     * @return List<GeoPoint> which should return null on none point, or list of points that intersect the tube
+     * @param point point to calculate the normal
+     * @return returns normal vector
      */
     @Override
-    public List<GeoPoint> findIntersections(Ray ray, double max) {
-        return null;
+    public Vector getNormal(Point3D point) {
+        //The vector from the point of the cylinder to the given point
+        Point3D o = _axisRay.get_p(); // at this point o = p0
+        Vector v = _axisRay.get_dir();
+
+        Vector vector1 = point.subtract(o);
+
+        //We need the projection to multiply the _direction unit vector
+        double projection = vector1.dotProduct(v);
+        if (!isZero(projection)) {
+            // projection of P-O on the ray:
+            o = o.add(v.scale(projection));
+        }
+
+        //This vector is orthogonal to the _direction vector.
+        Vector check = point.subtract(o);
+        return check.normalize();
+    }
+
+    @Override
+    public List<GeoPoint> findIntersections(Ray ray, double maxDistance) {
+        //TODO implementation
+
+        Point3D P = ray.get_p();
+        Point3D _point = this._axisRay.get_p();
+
+        Vector V = ray.get_dir(),
+                Va = this._axisRay.get_dir(),
+                DeltaP = new Vector(P.subtract(_point)),
+                temp_for_use1, temp_for_use2;
+
+        double V_dot_Va = V.dotProduct(Va),
+                DeltaP_dot_Va = DeltaP.dotProduct(Va);
+
+        temp_for_use1 = V.subtract(Va.scale(V_dot_Va));
+        temp_for_use2 = DeltaP.subtract(Va.scale(DeltaP_dot_Va));
+
+        double A = temp_for_use1.dotProduct(temp_for_use1);
+        double B = 2 * V.subtract(Va.scale(V_dot_Va)).dotProduct(DeltaP.subtract(Va.scale(DeltaP_dot_Va)));
+        double C = temp_for_use2.dotProduct(temp_for_use2) - _radius * _radius;
+        double desc = alignZero(B * B - 4 * A * C);
+
+        if (desc < 0) {//No solution
+            return null;
+        }
+
+        double t1 = (-B + Math.sqrt(desc)) / (2 * A),
+                t2 = (-B - Math.sqrt(desc)) / (2 * A);
+
+        if (desc == 0) {//One solution
+            if (-B / (2 * A) < 0) {
+                return null;
+            } else {
+                return List.of(new GeoPoint(this, P.add(V.scale(-B / (2 * A)))));
+            }
+        } else if (t1 < 0 && t2 < 0) {
+            return null;
+        } else if (t1 < 0 && t2 > 0) {
+            return List.of(new GeoPoint(this, P.add(V.scale(t2))));
+        } else if (t1 > 0 && t2 < 0) {
+            return List.of(new GeoPoint(this, P.add(V.scale(t1))));
+        } else {
+            return List.of(
+                    new GeoPoint(this, P.add(V.scale(t1))),
+                    new GeoPoint(this, P.add(V.scale(t2)))
+            );
+        }
     }
 }

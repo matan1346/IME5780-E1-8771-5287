@@ -6,6 +6,7 @@ import primitives.Ray;
 import primitives.Vector;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class Cylinder extends Tube {
      */
     public Cylinder(Ray _ray, double r, double height)
     {
-        super(_ray, r);
+        super(r, _ray);
         this.height = height;
     }
 
@@ -104,10 +105,21 @@ public class Cylinder extends Tube {
     /**
      * calculate the points of the intersections with the given ray to the cylinder
      * @param ray Ray which should intersect with the cylinder
+     * @param max double max distance value
      * @return List<Point3D> which should return null on none point, or list of points that intersect the cylinder
      */
     @Override
     public List<GeoPoint> findIntersections(Ray ray, double max) {
-        return super.findIntersections(ray, max);
+        List<GeoPoint> gps =  super.findIntersections(ray, max);
+
+        if(gps != null)
+        {
+            List<GeoPoint> n_gps = new ArrayList<>();
+            for(GeoPoint gp: gps){
+                n_gps.add(new GeoPoint(this, gp.getPoint()));
+            }
+            return n_gps;
+        }
+        return null;
     }
 }

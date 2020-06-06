@@ -9,8 +9,13 @@ import primitives.*;
 import scene.Scene;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.sqrt;
 import static primitives.Util.alignZero;
 
 /**
@@ -59,8 +64,13 @@ public class Render {
      * This method is making image with the camera and image, and renders it
      */
     public void renderImage() {
-        Camera camera = _scene.getCamera();
+        double sumColorR, sumColorG, sumColorB;// sum rgb colors to do averages
+        double colorR, colorG, colorB; //rgb colors
 
+        Camera camera = _scene.getCamera();
+        double screenDistance = _scene.getDistance();
+        double screenWidth = _imageWriter.getWidth();
+        double screenHeight = _imageWriter.getHeight();
         Intersectable geometries = _scene.getGeometries();
         java.awt.Color background = _scene.getBackground().getColor();
         int nX = _imageWriter.getNx();
@@ -69,16 +79,46 @@ public class Render {
 
         for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
-                Ray ray = camera.constructRayThroughPixel(nX, nY, j, i,
-                        _scene.getDistance(), _imageWriter.getWidth(), _imageWriter.getHeight());
-                GeoPoint closestPoint = findClosestIntersection(ray);
-                if (closestPoint == null)
-                    _imageWriter.writePixel(j, i, background);
-                else
-                    _imageWriter.writePixel(j, i, calcColor(closestPoint, ray).getColor());
+                sumColorR = sumColorG = sumColorB = 0.0;
+                int count_rays = 50;//numbers of rays per pixel
+
+                List<Ray> rays = new ArrayList<>();
+                rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
+                        screenDistance, screenWidth, screenHeight));
+
+
+                    for(int k= 0;k < count_rays-1;k++)
+                        rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
+                                screenDistance, screenWidth, screenHeight, true));
+
+                    Color tempColor;
+                    for(Ray ray : rays){
+                        GeoPoint closestPoint = findClosestIntersection(ray);
+                        if(closestPoint == null)
+                        {
+                            //_imageWriter.writePixel(j, i, background);
+                            count_rays--;
+                            continue;
+                        }
+
+                        tempColor = new Color(calcColor(closestPoint, ray).getColor());
+
+                        colorR = tempColor.getColor().getRed();
+                        colorG = tempColor.getColor().getGreen();
+                        colorB = tempColor.getColor().getBlue();
+
+                        sumColorR += colorR;// * colorR;
+                        sumColorG += colorG;// * colorG;
+                        sumColorB += colorB;// * colorB;
+
+
+                    }
+                    _imageWriter.writePixel(j, i, new Color((sumColorR/count_rays), (sumColorG/count_rays), (sumColorB/count_rays)).getColor());
+
+
+
             }
         }
-
     }
 
     /**
