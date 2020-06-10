@@ -60,6 +60,46 @@ public class Render {
         this._scene = scene;
     }
 
+
+    private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
+                                    java.awt.Color background){
+        double sumColorR =0.0, sumColorG = 0.0, sumColorB = 0.0;// sum rgb colors to do averages
+        double colorR, colorG, colorB; //rgb colors
+        int count_rays = 1;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
+        Color tempColor;
+        List<Ray> rays = new ArrayList<>();
+        rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
+                screenDistance, screenWidth, screenHeight));
+
+        //loop over rest of rays for supersampling
+        for(int k= 0;k < count_rays-1;k++)
+            rays.add(camera.constructRayThroughPixelRandom(nX, nY, j, i,
+                    screenDistance, screenWidth, screenHeight));
+
+        for(Ray ray : rays){
+            GeoPoint closestPoint = findClosestIntersection(ray);
+            if(closestPoint == null )
+            {
+                _imageWriter.writePixel(j, i, background);
+                count_rays--;
+                continue;
+            }
+
+            tempColor=  new Color(calcColor(closestPoint, ray).getColor());
+
+            colorR = tempColor.getColor().getRed();
+            colorG = tempColor.getColor().getGreen();
+            colorB = tempColor.getColor().getBlue();
+
+            sumColorR += colorR * colorR;
+            sumColorG += colorG * colorG;
+            sumColorB += colorB * colorB;
+        }
+        return new Color(sqrt(sumColorR/count_rays), sqrt(sumColorG/count_rays), sqrt(sumColorB/count_rays));//.getColor();
+    }
+
+
+
     /**
      * This method is making image with the camera and image, and renders it
      */
@@ -77,46 +117,14 @@ public class Render {
         int nY = _imageWriter.getNy();
 
 
+
+
+
+
+
         for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
-                sumColorR = sumColorG = sumColorB = 0.0;
-                int count_rays = 50;//numbers of rays per pixel
-
-                List<Ray> rays = new ArrayList<>();
-                rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
-                        screenDistance, screenWidth, screenHeight));
-
-
-                    for(int k= 0;k < count_rays-1;k++)
-                        rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
-                                screenDistance, screenWidth, screenHeight, true));
-
-                    Color tempColor;
-                    for(Ray ray : rays){
-                        GeoPoint closestPoint = findClosestIntersection(ray);
-                        if(closestPoint == null)
-                        {
-                            //_imageWriter.writePixel(j, i, background);
-                            count_rays--;
-                            continue;
-                        }
-
-                        tempColor = new Color(calcColor(closestPoint, ray).getColor());
-
-                        colorR = tempColor.getColor().getRed();
-                        colorG = tempColor.getColor().getGreen();
-                        colorB = tempColor.getColor().getBlue();
-
-                        sumColorR += colorR;// * colorR;
-                        sumColorG += colorG;// * colorG;
-                        sumColorB += colorB;// * colorB;
-
-
-                    }
-                    _imageWriter.writePixel(j, i, new Color((sumColorR/count_rays), (sumColorG/count_rays), (sumColorB/count_rays)).getColor());
-
-
-
+                _imageWriter.writePixel(j, i, calcColorWithRays(camera, nX,  nY,  i,  j,  screenDistance,  screenWidth, screenHeight, background).getColor());
             }
         }
     }
