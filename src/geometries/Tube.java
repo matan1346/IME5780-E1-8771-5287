@@ -30,7 +30,7 @@ public class Tube extends RadialGeometry {
      * throws Exception in case of negative or zero radius from RadialGeometry constructor
      */
     public Tube(Color emissionLight, Material _material, double _radius, Ray _ray) {
-        super(Color.BLACK, _radius);
+        super(emissionLight, _radius);
         this._material = _material;
         this._axisRay = new Ray(_ray);
 

@@ -2,11 +2,9 @@ package unittests;
 
 import elements.AmbientLight;
 import elements.Camera;
+import elements.PointLight;
 import elements.SpotLight;
-import geometries.Plane;
-import geometries.Sphere;
-import geometries.Triangle;
-import geometries.Tube;
+import geometries.*;
 import org.junit.Test;
 import primitives.*;
 import renderer.ImageWriter;
@@ -57,12 +55,245 @@ public class MiniProject1Test {
         scene.addLights(new SpotLight(new Color(700, 400, 400), //
                 new Point3D(40, -40, -115), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)));
 
-        ImageWriter imageWriter = new ImageWriter("MiniProject2", 200, 200, 600, 600);
+        ImageWriter imageWriter = new ImageWriter("MiniProject1.2", 200, 200, 600, 600);
         Render render = new Render(imageWriter, scene);
 
         render.renderImage();
         render.writeToImage();
     }
 
+
+    /**
+     * Produce a picture of a two triangles lighted by a spot light with a Sphere producing a shading
+     */
+    @Test
+    public void WallsTest() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+
+        scene.addGeometries(
+                /*new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(80, -90, 50),
+                        new Point3D(-90, -30, 50),
+                        new Point3D(-70, 50, 100)),*/
+          /** LEFT WALL **/
+          new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(-0.5, -100, 1800),
+                        new Point3D(-100, -100, 0),
+                        new Point3D(-0.5, 100, 1800)),
+                new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(-100, 100, 0),
+                        new Point3D(-100, -100, 0),
+                        new Point3D(-0.5, 100, 1800)),
+                /** RIGHT WALL **/
+                new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,0.5), //
+                        new Point3D(0.5, -100, 1800),
+                        new Point3D(100, -100, 0),
+                        new Point3D(0.5, 100, 1800)),
+                new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(100, 100, 0),
+                        new Point3D(100, -100, 0),
+                        new Point3D(0.5, 100, 1800)),
+                /**FLOOR**/
+                /*new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(250, -50, 3000),
+                        new Point3D(20, 10, -800),
+                        new Point3D(-250, -50, 3000)),*/
+                new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(-99,100, 0),
+                        new Point3D(0, 100, 1750),
+                        new Point3D(99, 100, 0)),
+                /*new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(-90, 100, 0),
+                        new Point3D(-90, -50, 0),
+                        new Point3D(70, 100, 2000)),/*
+                new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,1), //
+                        new Point3D(50, -50, 50),
+                        new Point3D(70, 20, 50),
+                        new Point3D(-50, 50, 50)),*/
+                /*new Polygon(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,1),
+                        new Point3D(0,50,1), new Point3D(0,50,0),new Point3D(0,50,3), new Point3D(0,50,2))*/
+                /*new Plane(new Color(java.awt.Color.GREEN),new Material(0.9, 0.8, 60, 0.7,0.5),
+                        new Point3D(7,0,1),new Point3D(6,5,0),new Point3D(6,3,2)),*/
+                /*new Cylinder(new Color(java.awt.Color.GREEN), new Material(0,0.8,60, 0, 1),
+                        new Ray(new Point3D(20,50,700), new Vector(2,4,10)), 1,2),*/
+                /*new Tube(new Color(java.awt.Color.GREEN), new Material(0,0.8,60, 0, 1),
+                         3,new Ray(new Point3D(20,50,700), new Vector(2,1,0))),*/
+                new Cube(new Color(java.awt.Color.GREEN),
+                        new Material(0, 0.8, 60,0,1),
+                        new Point3D(10,60,500), new Point3D(40,70,800)),
+                new Sphere(new Color(java.awt.Color.BLUE), new Material(0.5, 0.5, 30,0,0), // )
+                        new Point3D(-10, 50, 1200),10),
+                new Sphere(new Color(java.awt.Color.RED), new Material(0.5, 0.5, 30,0,0), // )
+                        new Point3D(-40, 50, 250),10));
+
+
+        scene.addLights(/*new SpotLight(new Color(700, 400, 400), //
+                        new Point3D(40, -40, -900), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),*/
+                //new SpotLight(new Color(700, 400, 400), //
+                //new Point3D(10, 0, -700), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),
+                //     new PointLight(new Color(java.awt.Color.YELLOW),new Point3D(50, -100, -200),1, 4E-4, 2E-5),
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(10, 0, -70),1, 4E-4, 2E-5)
+        );
+
+        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls", 200, 200, 600, 600);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
+
+    @Test
+    public void trianglesSphere3() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+
+        scene.addGeometries(
+
+//                new Sphere(new Color(java.awt.Color.BLUE), new Material(0.5, 0.5, 30,0,0), // )
+//                        new Point3D(0, 0, 0),10),
+
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(0, 0, 0),
+                        new Point3D(20, 0, 0),
+                        new Point3D(0, 0, 30)),
+                new Triangle(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 0, 30),
+                        new Point3D(20, 0, 0),
+                        new Point3D(0, 0, 30)),
+                /*   new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(0, 0, 0),
+                        new Point3D(20, 0, 0),
+                        new Point3D(20, 0, 30),
+                        new Point3D(0, 0, 30)),חזית*/
+                new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(0, 0, 30),
+                        new Point3D(20, 0, 30),
+                        new Point3D(0, 40, 30)),
+                new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 30),
+                        new Point3D(20, 0, 30),
+                        new Point3D(0, 40, 30)),
+                /*new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(2, 0, 3),
+                        new Point3D(0, 4, 3),
+                        new Point3D(2, 4, 3),
+                        new Point3D(0, 0, 3)) עליון*/
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(0, 0, 30),
+                        new Point3D(0, 0, 0),
+                        new Point3D(0, 40, 30)),
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(0, 40, 0),
+                        new Point3D(0, 0, 0),
+                        new Point3D(0, 40, 30)),
+                /*new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(2, 0, 0),
+                        new Point3D(2, 4, 3),
+                        new Point3D(2, 0, 3),
+                        new Point3D(2, 4, 0)),צד שמאל*/
+
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 30),
+                        new Point3D(20, 0, 0),
+                        new Point3D(20, 0, 30)),
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 30),
+                        new Point3D(20, 0, 0),
+                        new Point3D(20, 40, 0)),
+                /*new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(0, 4, 0),
+                        new Point3D(2, 4, 3),
+                        new Point3D(0, 4, 3),
+                        new Point3D(2, 4, 0))צד ימין */
+
+                new Triangle(new Color(java.awt.Color.WHITE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 0),
+                        new Point3D(20, 0, 0),
+                        new Point3D(0, 40, 0)),
+                new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(0, 0, 0),
+                        new Point3D(20, 0, 0),
+                        new Point3D(0, 40, 0)),
+                /*new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(0, 0, 0),
+                        new Point3D(2, 4, 0),
+                        new Point3D(0, 4, 0),
+                        new Point3D(2, 0, 0)), ריצפה*/
+
+                new Triangle(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 0),
+                        new Point3D(20, 40, 30),
+                        new Point3D(0, 40, 30)),
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(20, 40, 0),
+                        new Point3D(0, 40, 0),
+                        new Point3D(0, 40, 30))
+                /*new Polygon(new Color(java.awt.Color.BLUE),new Material(0,0.5,60),
+                        new Point3D(0, 0, 3),
+                        new Point3D(2, 4, 3),
+                        new Point3D(0, 4, 3),
+                        new Point3D(2, 0, 3))קיר אחורי */
+
+//                        new Point3D(2, 4, 0),
+//                        new Point3D(0, 4, 0),
+//                        new Point3D(0, 0, 3),
+//                        new Point3D(2, 0, 3),
+//                        new Point3D(2, 4, 3),
+//                        new Point3D(0, 4, 3)
+//                        )
+        );
+        scene.addLights(new SpotLight(new Color(700, 400, 400), //
+                        new Point3D(40, -40, -900), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),
+                new SpotLight(new Color(700, 400, 400), //
+                        new Point3D(40, -100, -800), 1, 4E-4, 2E-5,new Vector(1, 1, -4)),
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(50, -100, -200),1, 4E-4, 2E-5),
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(70, 80, -200),1, 4E-4, 2E-5));
+
+        ImageWriter imageWriter = new ImageWriter("MiniProject1Box", 200, 200, 600, 600);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
+
+
+    @Test
+    public void xYz() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, 0, -1000), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+
+        scene.addGeometries( //
+                new Cylinder(new Color(java.awt.Color.RED),new Material(0,0.8,60, 0, 1),
+                        new Ray(new Point3D(1, 1, 1), new Vector(2, 0, 0)),0.5,0),
+                new Cylinder(new Color(java.awt.Color.BLUE),new Material(0,0.8,60, 0, 1),
+                        new Ray(new Point3D(1, 1, 1), new Vector(0,2,0)),0.5,0),
+                new Cylinder(new Color(java.awt.Color.GREEN),new Material(0,0.8,60, 0, 1),
+                        new Ray(new Point3D(1, 1, 1), new Vector(0,0,2)),0.5,0)
+        );
+
+        scene.addLights(new SpotLight(new Color(700, 400, 400), //
+                        new Point3D(40, -40, -900), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),
+                new SpotLight(new Color(700, 400, 400), //
+                        new Point3D(40, -100, -800), 1, 4E-4, 2E-5,new Vector(1, 1, -4)),
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(50, -100, -200),1, 4E-4, 2E-5),
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(70, 80, -700),1, 4E-4, 2E-5));
+
+        ImageWriter imageWriter = new ImageWriter("XYZ", 200, 200, 600, 600);
+        Render render = new Render(imageWriter, scene);
+
+        render.renderImage();
+        render.writeToImage();
+    }
 
 }

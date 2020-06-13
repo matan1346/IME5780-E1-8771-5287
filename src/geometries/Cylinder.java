@@ -1,9 +1,6 @@
 package geometries;
 
-import primitives.Color;
-import primitives.Point3D;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
 
 import java.util.ArrayList;
@@ -40,9 +37,9 @@ public class Cylinder extends Tube {
      * @param r double radius value
      * @param height double height value
      */
-    public Cylinder(Color _emission, Ray _ray, double r, double height) {
-        this(_ray, r, height);
-        this._emission = _emission;
+    public Cylinder(Color _emission, Material _material, Ray _ray, double r, double height) {
+        super(_emission, _material,r, _ray);
+        this.height = height;
     }
 
     /**
