@@ -1,9 +1,6 @@
 package unittests;
 
-import elements.AmbientLight;
-import elements.Camera;
-import elements.PointLight;
-import elements.SpotLight;
+import elements.*;
 import geometries.*;
 import org.junit.Test;
 import primitives.*;
@@ -75,71 +72,88 @@ public class MiniProject1Test {
         scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
 
         scene.addGeometries(
-                /*new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(80, -90, 50),
-                        new Point3D(-90, -30, 50),
-                        new Point3D(-70, 50, 100)),*/
-          /** LEFT WALL **/
-          new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(-0.5, -100, 1800),
-                        new Point3D(-100, -100, 0),
-                        new Point3D(-0.5, 100, 1800)),
+                /**CENTER WALL**/
                 new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(-100, 100, 0),
-                        new Point3D(-100, -100, 0),
-                        new Point3D(-0.5, 100, 1800)),
-                /** RIGHT WALL **/
-                new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,0.5), //
-                        new Point3D(0.5, -100, 1800),
-                        new Point3D(100, -100, 0),
-                        new Point3D(0.5, 100, 1800)),
+                        new Point3D(300, -100, 2000),
+                        new Point3D(-300, -100, 2000),
+                        new Point3D(300, 100, 2000)),
                 new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(100, 100, 0),
-                        new Point3D(100, -100, 0),
-                        new Point3D(0.5, 100, 1800)),
+                        new Point3D(-300, 100, 2000),
+                        new Point3D(-300, -100, 2000),
+                        new Point3D(300, 100, 2000)),
+
                 /**FLOOR**/
-                /*new Triangle(new Color(java.awt.Color.BLACK), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(250, -50, 3000),
-                        new Point3D(20, 10, -800),
-                        new Point3D(-250, -50, 3000)),*/
-                new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(-99,100, 0),
-                        new Point3D(0, 100, 1750),
-                        new Point3D(99, 100, 0)),
-                /*new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(-90, 100, 0),
-                        new Point3D(-90, -50, 0),
-                        new Point3D(70, 100, 2000)),/*
-                new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,1), //
-                        new Point3D(50, -50, 50),
-                        new Point3D(70, 20, 50),
-                        new Point3D(-50, 50, 50)),*/
-                /*new Polygon(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,1),
-                        new Point3D(0,50,1), new Point3D(0,50,0),new Point3D(0,50,3), new Point3D(0,50,2))*/
-                /*new Plane(new Color(java.awt.Color.GREEN),new Material(0.9, 0.8, 60, 0.7,0.5),
-                        new Point3D(7,0,1),new Point3D(6,5,0),new Point3D(6,3,2)),*/
-                /*new Cylinder(new Color(java.awt.Color.GREEN), new Material(0,0.8,60, 0, 1),
-                        new Ray(new Point3D(20,50,700), new Vector(2,4,10)), 1,2),*/
-                /*new Tube(new Color(java.awt.Color.GREEN), new Material(0,0.8,60, 0, 1),
-                         3,new Ray(new Point3D(20,50,700), new Vector(2,1,0))),*/
-                new Cube(new Color(java.awt.Color.GREEN),
+                //DARK GRAY TRIANGLE - RIGHT
+                new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0.5, 0.8, 60, 0,0), //
+                        new Point3D(-100,100, 0),
+                        new Point3D(300, 100, 2000),
+                        new Point3D(100, 100, 0)),
+                //DARK GRAY TRIANGLE - LEFT
+                new Triangle(new Color(java.awt.Color.DARK_GRAY), new Material(0.5, 0.8, 60, 0,0), //
+                        new Point3D(-100,100, 0),
+                        new Point3D(300, 100, 2000),
+                        new Point3D(-300, 100, 2000)),
+
+                /**Diamond**/
+                new Triangle(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(-40,70, 900/*200*/),
+                        new Point3D(-20, 100, 1200/*500*/),
+                        new Point3D(0, 70, 1200/*500*/)),
+                new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(-10,75, 1500/*800*/),
+                        new Point3D(-20, 100, 1200/*500*/),
+                        new Point3D(0, 70, 1200/*500*/)),
+                new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(-10,75, 1500/*800*/),
+                        new Point3D(-20, 100, 1200/*500*/),
+                        new Point3D(-60, 85, 1500/*800*/)),
+                new Triangle(new Color(java.awt.Color.CYAN), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(-20, 100, 1200/*500*/),
+                        new Point3D(-40,70, 900/*200*/),
+                        new Point3D(-60, 85, 1500/*800*/)),
+                /**End Diamond**/
+
+
+                //GREEN TUBE (INTERSECTS A BLUE BALL)
+                new Tube(new Color(java.awt.Color.GREEN), new Material(0,0.8,60, 0, 1),
+                         1,new Ray(new Point3D(80,80,700), new Vector(-27,-20,50))),
+                //BLUE TUBE (INTERSECTS A YELLOW CUBE)
+                new Tube(new Color(java.awt.Color.BLUE), new Material(0,0.8,60, 0.6, 1),
+                         3,new Ray(new Point3D(-75,85,700), new Vector(10,-1,-70))),
+                //ORANGE CUBE (SLICED BY BLUE TUBE)
+                new Cube(new Color(java.awt.Color.ORANGE),
                         new Material(0, 0.8, 60,0,1),
-                        new Point3D(10,60,500), new Point3D(40,70,800)),
-                new Sphere(new Color(java.awt.Color.BLUE), new Material(0.5, 0.5, 30,0,0), // )
-                        new Point3D(-10, 50, 1200),10),
-                new Sphere(new Color(java.awt.Color.RED), new Material(0.5, 0.5, 30,0,0), // )
-                        new Point3D(-40, 50, 250),10));
+                        new Point3D(-70,80,600), new Point3D(-60,90,750)),
+                //WHITE TUBE (INSIDE THE TRANSPARENT RED SPHERE)
+                new Cube(new Color(java.awt.Color.WHITE),
+                        new Material(0, 0.8, 60,0,1),
+                        new Point3D(-105,85,700), new Point3D(-95,90,720)),
+                //RED SPHERE - RIGHT
+                new Sphere(new Color(java.awt.Color.RED), new Material(0, 0.8, 30,0,1), // )
+                        new Point3D(70, 80, 800),15),
+                //RED SPHERE - LEFT (ORANGE BOX INSIDE)
+                new Sphere(new Color(java.awt.Color.RED), new Material(1, 0.8, 30,0.8,0), // )
+                        new Point3D(-100, 80, 700),15),
+                //BLUE SPHERE (SLICED BY GREEN TUBE)
+                new Sphere(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 30,0,1), // )
+                        new Point3D(80, 80, 700),5),
+                //GREEN TUBE - RIGHT
+                new Sphere(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 30,0,1), // )
+                        new Point3D(140, 60, 1000),35));
 
 
-        scene.addLights(/*new SpotLight(new Color(700, 400, 400), //
-                        new Point3D(40, -40, -900), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),*/
-                //new SpotLight(new Color(700, 400, 400), //
-                //new Point3D(10, 0, -700), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)),
-                //     new PointLight(new Color(java.awt.Color.YELLOW),new Point3D(50, -100, -200),1, 4E-4, 2E-5),
-                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(10, 0, -70),1, 4E-4, 2E-5)
+        scene.addLights(
+                //WHITE LIGHT (NEAR THE DIAMOND)
+                new SpotLight(new Color(java.awt.Color.WHITE),new Point3D(20, -100, 1000),
+                        1, 4E-4, 2E-5,new Vector(-1,1,8)),
+                //PINK LIGHT - LEFT
+                new SpotLight(new Color(700, 400, 400),new Point3D(-100, 50, 1000),
+                        1, 4E-4, 2E-5,new Vector(0,0,-1)), //
+                //WHITE LIGHT - RIGHT
+                new PointLight(new Color(java.awt.Color.WHITE),new Point3D(100, 50, 1000),1, 4E-4, 2E-5)
         );
 
-        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls", 200, 200, 600, 600);
+        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls3", 200, 200, 1200, 1200);
         Render render = new Render(imageWriter, scene);
 
         render.renderImage();

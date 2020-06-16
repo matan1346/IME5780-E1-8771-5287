@@ -63,10 +63,8 @@ public class Render {
 
     private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
                                     java.awt.Color background){
-        double sumColorR =0.0, sumColorG = 0.0, sumColorB = 0.0;// sum rgb colors to do averages
-        double colorR, colorG, colorB; //rgb colors
         int count_rays = 1;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
-        Color tempColor;
+        Color tempColor = Color.BLACK;
         List<Ray> rays = new ArrayList<>();
         rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
                 screenDistance, screenWidth, screenHeight));
@@ -84,18 +82,9 @@ public class Render {
                 count_rays--;
                 continue;
             }
-
-            tempColor=  new Color(calcColor(closestPoint, ray).getColor());
-
-            colorR = tempColor.getColor().getRed();
-            colorG = tempColor.getColor().getGreen();
-            colorB = tempColor.getColor().getBlue();
-
-            sumColorR += colorR * colorR;
-            sumColorG += colorG * colorG;
-            sumColorB += colorB * colorB;
+            tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
         }
-        return new Color(sqrt(sumColorR/count_rays), sqrt(sumColorG/count_rays), sqrt(sumColorB/count_rays));//.getColor();
+        return (count_rays <= 1) ? tempColor : tempColor.reduce(count_rays);//.getColor();
     }
 
 
