@@ -95,22 +95,22 @@ public class MiniProject1Test {
                         new Point3D(-300, 100, 2000)),
 
                 /**Diamond**/
-                new Triangle(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,0), //
-                        new Point3D(-40,70, 900/*200*/),
-                        new Point3D(-20, 100, 1200/*500*/),
-                        new Point3D(0, 70, 1200/*500*/)),
+                /*new Triangle(new Color(java.awt.Color.RED), new Material(0, 0.8, 60, 0,0), //
+                        new Point3D(-40,70, 900),
+                        new Point3D(-20, 100, 1200/),
+                        new Point3D(0, 70, 1200)),
                 new Triangle(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 60, 0,0), //
-                        new Point3D(-10,75, 1500/*800*/),
-                        new Point3D(-20, 100, 1200/*500*/),
-                        new Point3D(0, 70, 1200/*500*/)),
+                        new Point3D(-10,75, 1500),
+                        new Point3D(-20, 100, 1200),
+                        new Point3D(0, 70, 1200)),
                 new Triangle(new Color(java.awt.Color.BLUE), new Material(0, 0.8, 60, 0,0), //
-                        new Point3D(-10,75, 1500/*800*/),
-                        new Point3D(-20, 100, 1200/*500*/),
-                        new Point3D(-60, 85, 1500/*800*/)),
+                        new Point3D(-10,75, 1500),
+                        new Point3D(-20, 100, 1200),
+                        new Point3D(-60, 85, 1500)),
                 new Triangle(new Color(java.awt.Color.CYAN), new Material(0, 0.8, 60, 0,0), //
-                        new Point3D(-20, 100, 1200/*500*/),
-                        new Point3D(-40,70, 900/*200*/),
-                        new Point3D(-60, 85, 1500/*800*/)),
+                        new Point3D(-20, 100, 1200),
+                        new Point3D(-40,70, 900),
+                        new Point3D(-60, 85, 1500)),*/
                 /**End Diamond**/
 
 
@@ -139,7 +139,13 @@ public class MiniProject1Test {
                         new Point3D(80, 80, 700),5),
                 //GREEN TUBE - RIGHT
                 new Sphere(new Color(java.awt.Color.GREEN), new Material(0, 0.8, 30,0,1), // )
-                        new Point3D(140, 60, 1000),35));
+                        new Point3D(140, 60, 1000),35),
+
+                new Pyramid(new Color(210,105,30),new Material(0.5,0.5,60),
+                        new Ray(new Point3D(-60,100,300), new Vector(0,-5,0)), 70,10,20),
+                new Pyramid(new Color(0,128,128),new Material(0.5,0.5,60),
+                        new Ray(new Point3D(100,100,300), new Vector(0,-5,0)), 70,30,20)
+                );
 
 
         scene.addLights(
@@ -153,8 +159,12 @@ public class MiniProject1Test {
                 new PointLight(new Color(java.awt.Color.WHITE),new Point3D(100, 50, 1000),1, 4E-4, 2E-5)
         );
 
-        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls3", 200, 200, 1200, 1200);
+        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls_SamplingNShadow", 200, 200, 1200, 1200);
         Render render = new Render(imageWriter, scene);
+
+
+        render.setSuperSamplingActive(true).setSuperSamplingSizeRays(50).
+                setSoftShadowActive(true).setSoftShadowRadius(1).setSoftShadowSizeRays(50);
 
         render.renderImage();
         render.writeToImage();

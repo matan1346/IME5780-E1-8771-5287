@@ -10,13 +10,13 @@ import scene.Scene;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static java.lang.Math.sqrt;
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * Render class that set the scene and the image writer and rendering
@@ -37,6 +37,15 @@ public class Render {
      * Stopping condition of eshtakfut
      */
     private static final double MIN_CALC_COLOR_K = 0.001;
+
+    //Super sampling
+    private boolean     SUPER_SAMPLING_ACTIVE = false;
+    private int         SUPER_SAMPLING_SIZE_RAYS = 50;
+
+    //Soft shadow
+    private boolean     SOFT_SHADOW_ACTIVE = false;
+    private double      SOFT_SHADOW_RADIUS = 0.1;
+    private int         SOFT_SHADOW_SIZE_RAYS = 300;
 
 
     /**
@@ -63,14 +72,14 @@ public class Render {
 
     private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
                                     java.awt.Color background){
-        int count_rays = 1;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
+        int count_rays = SUPER_SAMPLING_SIZE_RAYS;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
         Color tempColor = Color.BLACK;
         List<Ray> rays = new ArrayList<>();
         rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
                 screenDistance, screenWidth, screenHeight));
 
         //loop over rest of rays for supersampling
-        for(int k= 0;k < count_rays-1;k++)
+        for(int k= 0;SUPER_SAMPLING_ACTIVE &&  k < count_rays-1;k++)
             rays.add(camera.constructRayThroughPixelRandom(nX, nY, j, i,
                     screenDistance, screenWidth, screenHeight));
 
@@ -84,7 +93,7 @@ public class Render {
             }
             tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
         }
-        return (count_rays <= 1) ? tempColor : tempColor.reduce(count_rays);//.getColor();
+        return (count_rays <= 1 || !SUPER_SAMPLING_ACTIVE) ? tempColor : tempColor.reduce(count_rays);
     }
 
 
@@ -105,18 +114,64 @@ public class Render {
         int nX = _imageWriter.getNx();
         int nY = _imageWriter.getNy();
 
-
-
-
-
-
-
         for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 _imageWriter.writePixel(j, i, calcColorWithRays(camera, nX,  nY,  i,  j,  screenDistance,  screenWidth, screenHeight, background).getColor());
             }
         }
     }
+
+    /**
+     * Setter for super sampling system active or not
+     * @param active boolean true/false
+     * @return Render this object
+     */
+    public Render setSuperSamplingActive(boolean active) {
+        this.SUPER_SAMPLING_ACTIVE = active;
+        return this;
+    }
+
+    /**
+     * Setter for size of rays to generate for the super sampling feature
+     * @param size_rays int size of rays to generate
+     * @return Render this object
+     */
+    public Render setSuperSamplingSizeRays(int size_rays) {
+        this.SUPER_SAMPLING_SIZE_RAYS = size_rays;
+        return this;
+    }
+
+    /**
+     * Setter for soft shadow system - active or not
+     * @param active boolean true/false
+     * @return Render this object
+     */
+    public Render setSoftShadowActive(boolean active) {
+        this.SOFT_SHADOW_ACTIVE = active;
+        return this;
+    }
+
+    /**
+     * Setter for soft shadow system - radius value
+     * @param radius double value of radius
+     * @return Render this object
+     */
+    public Render setSoftShadowRadius(double radius) {
+        this.SOFT_SHADOW_RADIUS = radius;
+        return this;
+    }
+
+    /**
+     * Setter for size of rays to generate for the soft shadow feature
+     * @param size_rays int size of rays to generate
+     * @return Render this object
+     */
+    public Render setSoftShadowSizeRays(int size_rays) {
+        this.SOFT_SHADOW_SIZE_RAYS = size_rays;
+        return this;
+    }
+
+
 
     /**
      * Find intersections of a ray with the scene geometries and get the
@@ -397,6 +452,46 @@ public class Render {
     }
 
     /**
+     * Calculate the shadow of the geometry by list of rays
+     * @param l Vector
+     * @param n Vector
+     * @param gp GeoPoint the geometry point of the transparency
+     * @param lightSource LightSource object
+     * @return
+     */
+    private double transparency(Vector l, Vector n, GeoPoint gp, LightSource lightSource) {
+        double ktr = 0.0;
+        List<Ray> rayList = transparencyGetListOfRay(l,n,gp,lightSource);
+        for (Ray r : rayList) {
+            ktr += transparencyRay(r,gp,lightSource);
+        }
+        return ktr / rayList.size();
+    }
+
+    /**
+     * Calculate the shadow of the geometry by single ray
+     * @param ray Ray object
+     * @param gp GeoPoint the geometry point of the transparency
+     * @param lightSource LightSource object
+     * @return
+     */
+    private double transparencyRay(Ray ray, GeoPoint gp, LightSource lightSource) {
+        double ktr = 1.0;
+        Point3D point = gp.getPoint();// get one for fast performance
+        List<GeoPoint> intersections = _scene.getGeometries().findIntersections(ray);
+        if (intersections == null) return ktr;
+        double lightDistance = lightSource.getDistance(point);
+
+        for (GeoPoint geoP : intersections) {
+            if (alignZero(geoP.getPoint().distance(point) - lightDistance) <= 0) {
+                ktr *= geoP.getGeometry().getMaterial().getKT();
+                if (ktr < MIN_CALC_COLOR_K) return  0.0;
+            }
+        }
+        return ktr;
+    }
+
+    /**
      *
      * @param l
      * @param n
@@ -404,25 +499,56 @@ public class Render {
      * @param lightSource
      * @return
      */
-    private double transparency(Vector l, Vector n, GeoPoint gp, LightSource lightSource) {
+    private List<Ray> transparencyGetListOfRay(Vector l, Vector n, GeoPoint gp, LightSource lightSource) {
         Vector lightDirection = l.scale(-1); // from point to light source
-
         Point3D point = gp.getPoint();// get one for fast performance
-
         Ray lightRay = new Ray(point, lightDirection, n);
-        List<GeoPoint> intersections = _scene.getGeometries().findIntersections(lightRay);
-        if (intersections == null) return 1.0;
-        double lightDistance = lightSource.getDistance(point);
-        double ktr = 1.0;
-        for (GeoPoint geoP : intersections) {
-            if (alignZero(geoP.getPoint().distance(point) - lightDistance) <= 0) {
-                ktr *= geoP.getGeometry().getMaterial().getKT();
-                if (ktr < MIN_CALC_COLOR_K) return 0.0;
+        List<Ray> list = new LinkedList(Collections.singletonList(lightRay));
+
+        if (SOFT_SHADOW_ACTIVE && SOFT_SHADOW_SIZE_RAYS > 0 && !isZero(SOFT_SHADOW_RADIUS)) {
+            int counter = SOFT_SHADOW_SIZE_RAYS;
+            Vector v = lightRay.get_dir();
+            Point3D p0 = lightRay.get_p();
+            double x0 = p0.getX().get();
+            double y0 = p0.getY().get();
+            double z0 = p0.getZ().get();
+            Vector vX;
+            if (x0 <= y0 && x0 <= z0) {
+                vX = (new Vector(0.0D, -z0, y0)).normalize();
+            } else if (y0 <= x0 && y0 <= z0) {
+                vX = (new Vector(z0, 0.0D, -x0)).normalize();
+            } else if (y0 == 0.0D && x0 == 0.0D) {
+                vX = (new Vector(1.0D, 1.0D, 0.0D)).normalize();
+            } else {
+                vX = (new Vector(y0, -x0, 0.0D)).normalize();
+            }
+            Vector vY = v.crossProduct(vX).normalize();
+            Point3D pc = p0.add(v);
+            while (counter > 0) {
+                double xFactor = ThreadLocalRandom.current().nextDouble(-1.0D, 1.0D);
+                double yFactor = Math.sqrt(1.0D - xFactor * xFactor);
+                double scale;
+                for (scale = 0.0D; isZero(scale); scale = ThreadLocalRandom.current().nextDouble(-SOFT_SHADOW_RADIUS, SOFT_SHADOW_RADIUS));
+                xFactor = scale * xFactor;
+                yFactor = scale * yFactor;
+                Point3D p = pc;
+                if (!isZero(xFactor)) {
+                    p = p.add(vX.scale(xFactor));
+                }
+
+                if (!isZero(yFactor)) {
+                    p = p.add(vY.scale(yFactor));
+                }
+                Vector v1 = (p.subtract(p0)).normalized();
+                if (v.dotProduct(n) * v1.dotProduct(n) > 0.0D) {
+                    --counter;
+                    list.add(new Ray(p0, v1));
+                }
             }
         }
-        return ktr;
-
+        return list;
     }
+
 
     /**
      * this function gets a point, a ray and a vector and return the reflected ray
