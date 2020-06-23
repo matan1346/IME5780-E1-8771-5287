@@ -1,20 +1,67 @@
 package unittests;
 
-import elements.AmbientLight;
-import elements.Camera;
-import elements.PointLight;
-import elements.SpotLight;
+import elements.*;
 import geometries.*;
+import geometries.Intersectable.*;
 import primitives.*;
 import org.junit.Test;
 import renderer.ImageWriter;
 import renderer.Render;
 import scene.Scene;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static primitives.Util.isZero;
 
 public class PyramidTest {
+
+    @Test
+    public void  PyramidIntersectionTest()
+    {
+        Ray baseRay = new Ray(new Point3D(0,0,0), new Vector(0,-1,0));
+
+        Pyramid pyramid = new Pyramid(
+                baseRay,
+                20, 40, 50);
+
+
+        //FROM BAST TO TOP OF PYRAMID - NO INTERSECTIONS
+        assertEquals("ERROR MUST BE NO INTERSECTIONS - BASE TO TOP", null, pyramid.findIntersections(baseRay));
+
+
+        //FROM BASE TO NEAR TOP - 1 INTERSECTION
+        Ray ray2 = new Ray(new Point3D(1,0,0), new Vector(0,-1,0));
+
+        List<GeoPoint> intersections = pyramid.findIntersections(ray2);
+
+
+        assertEquals("ERROR MUST BE 1 INTERSECTION - from base to near top", 1, intersections.size());
+
+        //FROM UNDER BASE TO TOP - 1 INTERSECTION
+        Ray ray3 = new Ray(new Point3D(0,25,0), new Vector(0,-1,0));
+
+        List<GeoPoint> intersections3 = pyramid.findIntersections(ray3);
+
+
+        assertEquals("ERROR MUST BE 1 INTERSECTION - from UNDER base to near top", 1, intersections3.size());
+
+
+        //FROM UNDER BASE TO NEAR TOP - 2 INTERSECTIONS
+        Ray ray4 = new Ray(new Point3D(1,25,0), new Vector(0,-1,0));
+        List<GeoPoint> intersections4 = pyramid.findIntersections(ray4);
+
+
+        assertEquals("ERROR MUST BE 2 INTERSECTION", 2, intersections4.size());
+
+
+        //FROM WALL TO WALL - 2 INTERSECTIONS
+        Ray ray5 = new Ray(new Point3D(35,-5,5), new Vector(-40,-5,0));
+        List<GeoPoint> intersections5 = pyramid.findIntersections(ray5);
+
+        assertEquals("ERROR MUST BE 2 INTERSECTION - from wall to wall", 2, intersections5.size());
+
+    }
 
     @Test
     public void PyramidTest()
@@ -46,8 +93,11 @@ public class PyramidTest {
                         new Point3D(-100,100, 0),
                         new Point3D(300, 100, 2000),
                         new Point3D(-300, 100, 2000)),
-                new Pyramid(new Color(java.awt.Color.blue),new Material(0.5,0.5,60),
-                        new Ray(new Point3D(-50,100,500), new Vector(0,-5,0)), 70,30,45)
+                new Pyramid(new Color(java.awt.Color.blue),new Material(0.5,0.5,60, 1, 0),
+                        new Ray(new Point3D(0,100,500), new Vector(0,-1,0)), 70,30,45),
+                new Pyramid(new Color(java.awt.Color.RED),new Material(0.5,0.5,60),
+                        new Ray(new Point3D(35,95,510), new Vector(-40,-10,0)),
+                        70, 30, 45)
         );
 
 
@@ -66,7 +116,7 @@ public class PyramidTest {
         Render render = new Render(imageWriter, scene);
 
 
-        render.setSoftShadowActive(true).setSoftShadowSizeRays(20);
+        render.setSoftShadowActive(false).setSoftShadowSizeRays(20);
 
         render.renderImage();
         render.writeToImage();
