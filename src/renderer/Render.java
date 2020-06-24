@@ -38,9 +38,7 @@ public class Render {
      */
     private static final double MIN_CALC_COLOR_K = 0.001;
 
-    //Super sampling
-    private boolean     SUPER_SAMPLING_ACTIVE = false;
-    private int         SUPER_SAMPLING_SIZE_RAYS = 50;
+
 
     //Soft shadow
     private boolean     SOFT_SHADOW_ACTIVE = false;
@@ -70,18 +68,12 @@ public class Render {
     }
 
 
-    private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
+    /*private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
                                     java.awt.Color background){
         int count_rays = SUPER_SAMPLING_SIZE_RAYS;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
         Color tempColor = Color.BLACK;
-        List<Ray> rays = new ArrayList<>();
-        rays.add(camera.constructRayThroughPixel(nX, nY, j, i,
-                screenDistance, screenWidth, screenHeight));
-
-        //loop over rest of rays for supersampling
-        for(int k= 0;SUPER_SAMPLING_ACTIVE &&  k < count_rays-1;k++)
-            rays.add(camera.constructRayThroughPixelRandom(nX, nY, j, i,
-                    screenDistance, screenWidth, screenHeight));
+        List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, j, i,
+                screenDistance, screenWidth, screenHeight);
 
         for(Ray ray : rays){
             GeoPoint closestPoint = findClosestIntersection(ray);
@@ -94,14 +86,14 @@ public class Render {
             tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
         }
         return (count_rays <= 1 || !SUPER_SAMPLING_ACTIVE) ? tempColor : tempColor.reduce(count_rays);
-    }
+    }*/
 
 
 
     /**
      * This method is making image with the camera and image, and renders it
      */
-    public void renderImage() {
+    /*public void renderImage() {
         double sumColorR, sumColorG, sumColorB;// sum rgb colors to do averages
         double colorR, colorG, colorB; //rgb colors
 
@@ -119,27 +111,9 @@ public class Render {
                 _imageWriter.writePixel(j, i, calcColorWithRays(camera, nX,  nY,  i,  j,  screenDistance,  screenWidth, screenHeight, background).getColor());
             }
         }
-    }
+    }*/
 
-    /**
-     * Setter for super sampling system active or not
-     * @param active boolean true/false
-     * @return Render this object
-     */
-    public Render setSuperSamplingActive(boolean active) {
-        this.SUPER_SAMPLING_ACTIVE = active;
-        return this;
-    }
 
-    /**
-     * Setter for size of rays to generate for the super sampling feature
-     * @param size_rays int size of rays to generate
-     * @return Render this object
-     */
-    public Render setSuperSamplingSizeRays(int size_rays) {
-        this.SUPER_SAMPLING_SIZE_RAYS = size_rays;
-        return this;
-    }
 
     /**
      * Setter for soft shadow system - active or not
@@ -254,6 +228,22 @@ public class Render {
         _imageWriter.writeToImage();
     }
 
+
+    private Color calcColor(List<Ray> rays)
+    {
+        int size_rays = rays.size();
+        Color tempColor = new Color(0,0,0);
+        for(Ray ray : rays){
+            GeoPoint closestPoint = findClosestIntersection(ray);
+            if(closestPoint == null )
+            {
+                size_rays--;
+                continue;
+            }
+            tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
+        }
+        return (size_rays <= 1 || !_scene.getCamera().getSuperSamplingActive()) ? tempColor : tempColor.reduce(size_rays);
+    }
 
     /**
      * Calculating the color by a Point
@@ -579,4 +569,167 @@ public class Render {
     private Ray constructRefractedRay(Point3D p, Ray inRay, Vector n) {
         return new Ray(p, inRay.get_dir(), n);
     }
+
+
+    /**
+     * IMPROVEMENTS
+     */
+    private int _threads = 1;
+    private final int SPARE_THREADS = 2;
+    private boolean _print = false;
+
+    /**
+     * Pixel is an internal helper class whose objects are associated with a Render object that
+     * they are generated in scope of. It is used for multithreading in the Renderer and for follow up
+     * its progress.<br/>
+     * There is a main follow up object and several secondary objects - one in each thread.
+     * @author Dan
+     *
+     */
+    private class Pixel {
+        private long _maxRows = 0;
+        private long _maxCols = 0;
+        private long _pixels = 0;
+        public volatile int row = 0;
+        public volatile int col = -1;
+        private long _counter = 0;
+        private int _percents = 0;
+        private long _nextCounter = 0;
+
+        /**
+         * The constructor for initializing the main follow up Pixel object
+         * @param maxRows the amount of pixel rows
+         * @param maxCols the amount of pixel columns
+         */
+        public Pixel(int maxRows, int maxCols) {
+            _maxRows = maxRows;
+            _maxCols = maxCols;
+            _pixels = maxRows * maxCols;
+            _nextCounter = _pixels / 100;
+            if (Render.this._print) System.out.printf("\r %02d%%", _percents);
+        }
+
+        /**
+         *  Default constructor for secondary Pixel objects
+         */
+        public Pixel() {}
+
+        /**
+         * Internal function for thread-safe manipulating of main follow up Pixel object - this function is
+         * critical section for all the threads, and main Pixel object data is the shared data of this critical
+         * section.<br/>
+         * The function provides next pixel number each call.
+         * @param target target secondary Pixel object to copy the row/column of the next pixel
+         * @return the progress percentage for follow up: if it is 0 - nothing to print, if it is -1 - the task is
+         * finished, any other value - the progress percentage (only when it changes)
+         */
+        private synchronized int nextP(Pixel target) {
+            ++col;
+            ++_counter;
+            if (col < _maxCols) {
+                target.row = this.row;
+                target.col = this.col;
+                if (_counter == _nextCounter) {
+                    ++_percents;
+                    _nextCounter = _pixels * (_percents + 1) / 100;
+                    return _percents;
+                }
+                return 0;
+            }
+            ++row;
+            if (row < _maxRows) {
+                col = 0;
+                if (_counter == _nextCounter) {
+                    ++_percents;
+                    _nextCounter = _pixels * (_percents + 1) / 100;
+                    return _percents;
+                }
+                return 0;
+            }
+            return -1;
+        }
+
+        /**
+         * Public function for getting next pixel number into secondary Pixel object.
+         * The function prints also progress percentage in the console window.
+         * @param target target secondary Pixel object to copy the row/column of the next pixel
+         * @return true if the work still in progress, -1 if it's done
+         */
+        public boolean nextPixel(Pixel target) {
+            int percents = nextP(target);
+            if (percents > 0)
+                if (Render.this._print) System.out.printf("\r %02d%%", percents);
+            if (percents >= 0)
+                return true;
+            if (Render.this._print) System.out.printf("\r %02d%%", 100);
+            return false;
+        }
+    }
+
+    /**
+     * This function renders image's pixel color map from the scene included with
+     * the Renderer object
+     */
+    public void renderImage() {
+        final int nX = _imageWriter.getNx();
+        final int nY = _imageWriter.getNy();
+        final double dist = _scene.getDistance();
+        final double width = _imageWriter.getWidth();
+        final double height = _imageWriter.getHeight();
+        final Camera camera = _scene.getCamera();
+
+        final Pixel thePixel = new Pixel(nY, nX);
+
+        // Generate threads
+        Thread[] threads = new Thread[_threads];
+        for (int i = _threads - 1; i >= 0; --i) {
+            threads[i] = new Thread(() -> {
+                Pixel pixel = new Pixel();
+                while (thePixel.nextPixel(pixel)) {
+                    List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, pixel.col, pixel.row, dist, width, height);
+                    _imageWriter.writePixel(pixel.col, pixel.row, calcColor(rays).getColor());
+                }
+            });
+        }
+
+        // Start threads
+        for (Thread thread : threads) thread.start();
+
+        // Wait for all threads to finish
+        for (Thread thread : threads) try { thread.join(); } catch (Exception e) {}
+        if (_print) System.out.printf("\r100%%\n");
+    }
+
+    /**
+     * Set multithreading <br>
+     * - if the parameter is 0 - number of coress less 2 is taken
+     *
+     * @param threads number of threads
+     * @return the Render object itself
+     */
+    public Render setMultithreading(int threads) {
+        if (threads < 0)
+            throw new IllegalArgumentException("Multithreading patameter must be 0 or higher");
+        if (threads != 0)
+            _threads = threads;
+        else {
+            int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+            if (cores <= 2)
+                _threads = 1;
+            else
+                _threads = cores;
+        }
+        return this;
+    }
+
+    /**
+     * Set debug printing on
+     *
+     * @return the Render object itself
+     */
+    public Render setDebugPrint() {
+        _print = true;
+        return this;
+    }
+
 }

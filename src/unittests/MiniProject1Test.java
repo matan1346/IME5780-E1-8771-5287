@@ -159,12 +159,13 @@ public class MiniProject1Test {
                 new PointLight(new Color(java.awt.Color.WHITE),new Point3D(100, 50, 1000),1, 4E-4, 2E-5)
         );
 
-        ImageWriter imageWriter = new ImageWriter("MiniProject1Walls_SamplingNShadow", 200, 200, 1200, 1200);
+        ImageWriter imageWriter = new ImageWriter("MiniProject2_Threads_Walls2", 200, 200, 1200, 1200);
         Render render = new Render(imageWriter, scene);
 
 
-        render.setSuperSamplingActive(true).setSuperSamplingSizeRays(50).
-                setSoftShadowActive(true).setSoftShadowRadius(1).setSoftShadowSizeRays(50);
+        scene.getCamera().setSuperSamplingActive(true).setSuperSamplingSizeRays(50);
+        render.setSoftShadowActive(true).setSoftShadowRadius(1).setSoftShadowSizeRays(50).setMultithreading(3) //
+                .setDebugPrint();
 
         render.renderImage();
         render.writeToImage();
@@ -316,6 +317,51 @@ public class MiniProject1Test {
         ImageWriter imageWriter = new ImageWriter("XYZ", 200, 200, 600, 600);
         Render render = new Render(imageWriter, scene);
 
+        render.renderImage();
+        render.writeToImage();
+    }
+
+
+    @Test
+    public void trianglesSpherePlane2() {
+        Scene scene = new Scene("Test scene");
+        scene.setCamera(new Camera(new Point3D(0, -80, -1500), new Vector(0, 0, 1), new Vector(0, -1, 0)));
+        scene.setDistance(1000);
+        scene.setBackground(Color.BLACK);
+        scene.setAmbientLight(new AmbientLight(new Color(java.awt.Color.WHITE), 0.15));
+
+        scene.addGeometries( //
+                new Plane(new Color(java.awt.Color.DARK_GRAY),new Material(0.2, 0.2, 60,0 , 0.7),
+                        new Point3D(50, 10, 700),
+                        new Point3D(0, 10, 500),
+                        new Point3D(10, 10, 700)),
+                new Sphere(new Color(java.awt.Color.red), new Material(0.2, 0.5, 30), // )
+                        new Point3D(40, -31, 100),40),
+                new Sphere(new Color(java.awt.Color.BLUE), new Material(0.2, 0.5, 30), // )
+                        new Point3D(20, -21, -100),30),
+                new Sphere(new Color(java.awt.Color.YELLOW), new Material(0.2, 0.5, 30), // )
+                        new Point3D(0, -11, -300),20)
+
+//
+        );
+
+        scene.addLights(
+                new SpotLight(new Color(700, 400, 400),
+                        new Point3D(70, -90,100), 1, 0.000001, 0.00005,new Vector(-40, 30,-30)),
+                new SpotLight(new Color(700, 400, 400),
+                        new Point3D(50, -70,-100), 1, 0.000001, 0.00005,new Vector(-40, 30,-30)),
+                new SpotLight(new Color(700, 400, 400),
+                        new Point3D(30, -50,-300), 1, 0.000001, 0.00005,new Vector(-80, 30,-30))
+
+
+        );
+
+        ImageWriter imageWriter = new ImageWriter("trianglesSpherePlaneWithShadow3", 200, 200, 600, 600);
+        Render render = new Render(imageWriter, scene);
+
+
+        render.setSoftShadowSizeRays(50).setSoftShadowRadius(0.05).setSoftShadowActive(true)
+        .setMultithreading(1).setDebugPrint();
         render.renderImage();
         render.writeToImage();
     }

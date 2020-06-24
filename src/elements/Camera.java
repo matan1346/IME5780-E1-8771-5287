@@ -1,7 +1,10 @@
 package elements;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import primitives.*;
+import renderer.Render;
 
 import java.util.Map;
 
@@ -30,6 +33,12 @@ public class Camera {
      * Vector the right vector of the camera
      */
     private Vector _Vright;
+
+
+    //Super sampling
+    private boolean     SUPER_SAMPLING_ACTIVE = false;
+    private int         SUPER_SAMPLING_SIZE_RAYS = 50;
+
 
     private Random rand = new Random();
 
@@ -75,6 +84,7 @@ public class Camera {
                 ((String)attributes.get("Vup")).split("\\s+"));
         }
 
+
     /**
      * Gets layout of the view plane, with units of width, height and positions
      * @param nX int width per item
@@ -96,30 +106,6 @@ public class Camera {
     }
 
     /**
-     * Gets a random layout of the view plane, with units of width, height and positions
-     * @param nX int width per item
-     * @param nY int height per item
-     * @param j int the position of the column
-     * @param i int the position of thr row
-     * @param screenDistance double screen distance
-     * @param screenWidth double screen width
-     * @param screenHeight double screen height
-     * @return Ray the construct random ray in the position i,j with this view plane
-     */
-    public Ray constructRayThroughPixelRandom (int nX, int nY,
-                                               int j, int i, double screenDistance,
-                                               double screenWidth, double screenHeight) {
-        double Rx = screenWidth / nX;
-        double Ry = screenHeight / nY;
-        return constructRayThroughPixel ( nX,  nY,
-                j,  i,  screenDistance,
-                screenWidth,  screenHeight, Ry, Rx,
-                rand.nextDouble() + rand.nextInt((int)Ry <= 0 ? 1 : (int)Ry),
-                rand.nextDouble() + rand.nextInt((int)Rx <= 0 ? 1 : (int)Rx));
-    }
-
-
-    /**
      * Gets the layout of the view plane, with units of width, height and positions
      * @param nX int width per item
      * @param nY int height per item
@@ -134,38 +120,51 @@ public class Camera {
      * @param calcRx double adding Rx
      * @return Ray the construct ray in the position i,j with this view plane
      */
-    public Ray constructRayThroughPixel (int nX, int nY,
-                                         int j, int i, double screenDistance,
-                                         double screenWidth, double screenHeight,double Ry, double Rx, double calcRy, double calcRx)
+    private Ray constructRayThroughPixel (int nX, int nY,
+                                          int j, int i, double screenDistance,
+                                          double screenWidth, double screenHeight,double Ry, double Rx, double calcRy, double calcRx)
     {
-        Point3D Pc = _p0.add(_Vto.scale(screenDistance));
-        /*double Ry = screenHeight / nY;
-        double Rx = screenWidth / nX;
-
-        int intRy = (int)Ry;
-        int intRx = (int)Rx;
-
-        //if isRandom is true, than calculate random Ry,Rx, else calculate center
-        double calcRy = (isRandom ? rand.nextDouble() + rand.nextInt(intRy <= 0 ? 1 : intRy ) : Ry/2d);
-        double calcRx = (isRandom ? rand.nextDouble() + rand.nextInt(intRx <= 0 ? 1 : intRx ) : Rx/2d);
-        */
-
         double Yi = (i - nY/2d)*Ry + calcRy;
         double Xj = (j - nX/2d)*Rx + calcRx;
-
-
+        Point3D Pc = _p0.add(_Vto.scale(screenDistance));
         Point3D Pij = Pc;
-
         if(!isZero(Xj))
             Pij = Pij.add(_Vright.scale(Xj));
-
         if(!isZero(Yi))
             Pij = Pij.add(_Vup.scale(-Yi));
-
         Vector Vij = Pij.subtract(_p0);
-
         return new Ray(_p0, Vij.normalize());
     }
+
+    /**
+     * Gets a random layout of the view plane, with units of width, height and positions
+     * @param nX int width per item
+     * @param nY int height per item
+     * @param j int the position of the column
+     * @param i int the position of thr row
+     * @param screenDistance double screen distance
+     * @param screenWidth double screen width
+     * @param screenHeight double screen height
+     * @return Ray the construct random ray in the position i,j with this view plane
+     */
+    public List<Ray> constructRaysThroughPixel (int nX, int nY,
+                                                int j, int i, double screenDistance,
+                                                double screenWidth, double screenHeight)//,double Ry, double Rx, double calcRy, double calcRx)
+    {
+        List<Ray> rayList = new LinkedList<Ray>();
+        double Rx = screenWidth / nX;
+        double Ry = screenHeight / nY;
+        rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight));
+        for(int t = 0; SUPER_SAMPLING_ACTIVE && t < SUPER_SAMPLING_SIZE_RAYS; t++){
+            rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight,Ry, Rx,
+                    rand.nextDouble() + rand.nextInt((int)Ry <= 0 ? 1 : (int)Ry),
+                    rand.nextDouble() + rand.nextInt((int)Rx <= 0 ? 1 : (int)Rx)));
+        }
+        return rayList;
+    }
+
+
+
 
     /**
      * Getter that gets the center point of the camera
@@ -197,5 +196,41 @@ public class Camera {
      */
     public Vector getVright() {
         return _Vright;
+    }
+
+    /**
+     * Getter that return if super sampling is active or not
+     * @return boolean active or not
+     */
+    public boolean getSuperSamplingActive() {
+        return SUPER_SAMPLING_ACTIVE;
+    }
+
+    /**
+     * Getter that return the size of rays in super sampling
+     * @return int num of rays
+     */
+    public int getSuperSamplingSizeRays() {
+        return SUPER_SAMPLING_SIZE_RAYS;
+    }
+
+    /**
+     * Setter for super sampling system active or not
+     * @param active boolean true/false
+     * @return Camera this object
+     */
+    public Camera setSuperSamplingActive(boolean active) {
+        this.SUPER_SAMPLING_ACTIVE = active;
+        return this;
+    }
+
+    /**
+     * Setter for size of rays to generate for the super sampling feature
+     * @param size_rays int size of rays to generate
+     * @return Camera this object
+     */
+    public Camera setSuperSamplingSizeRays(int size_rays) {
+        this.SUPER_SAMPLING_SIZE_RAYS = size_rays;
+        return this;
     }
 }
