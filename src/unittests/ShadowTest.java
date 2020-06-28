@@ -168,8 +168,12 @@ public class ShadowTest {
         scene.addLights(new SpotLight(new Color(700, 400, 400), //
                 new Point3D(40, -40, -115), 1, 4E-4, 2E-5,new Vector(-1, 1, 4)));
 
-        ImageWriter imageWriter = new ImageWriter("trianglesSphere", 200, 200, 600, 600);
+        ImageWriter imageWriter = new ImageWriter("trianglesSphereAdaptive", 200, 200, 600, 600);
         Render render = new Render(imageWriter, scene);
+
+        render.setMultithreading(3).setDebugPrint().setSoftShadowActive(false);
+
+        scene.getCamera().setSuperSamplingActive(true).setSuperSamplingSizeRays(4);
 
         render.renderImage();
         render.writeToImage();

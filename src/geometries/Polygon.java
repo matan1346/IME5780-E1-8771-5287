@@ -133,4 +133,5 @@ public class Polygon extends Geometry {
 
         return intersections;
     }
+
 }

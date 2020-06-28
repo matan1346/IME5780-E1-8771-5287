@@ -666,6 +666,71 @@ public class Render {
         }
     }
 
+
+    private Color calcColorAdaptiveRays(List<Ray> rays)
+    {
+        Color tempColor;
+        Color oldColor = new Color(0,0,0);
+        boolean savedColor = false;
+        for(Ray ray : rays){
+            GeoPoint closestPoint = findClosestIntersection(ray);
+            if(closestPoint == null )
+                continue;
+
+            tempColor = new Color(calcColor(closestPoint, ray).getColor());
+            if(savedColor && !tempColor.equals(oldColor))
+                return null;
+            else
+                oldColor = new Color(tempColor);
+            savedColor = true;
+        }
+        return oldColor;
+    }
+
+    private Color calcColorAdaptive(Camera camera,int nX,int nY,int col,int row,double distance,
+                                   double width, double height, int recursion)
+    {
+        List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, col, row, distance, width, height);
+        Color color = calcColorAdaptiveRays(rays);
+
+        if(color == null && recursion > 0) {
+            double Rx = width / nX;
+            double Ry = height / nY;
+            int numPixel = 2;
+            recursion--;
+
+
+            int count = 0;
+            Color tempColor = new Color(0,0,0);
+            Color currColor;
+            for(int i =0;i < numPixel;i++ )
+                for(int j = 0;j < numPixel;j++)
+                {
+                    currColor = calcColorAdaptive(camera, numPixel, numPixel, j, i,
+                            distance, Rx, Ry, recursion);
+                    if(currColor != null)
+                    {
+                        tempColor = tempColor.add(currColor);
+                        count++;
+                    }
+                }
+
+            if(count > 0)
+                System.out.println("How much? - " + count);
+
+
+            color = (count > 0) ? tempColor.reduce(count) : new Color(_scene.getBackground().getColor());
+        }
+        return color;
+    }
+
+    public Color calcColorAdaptive(Camera camera,int nX,int nY,int col,int row,double distance,
+        double width, double height)
+    {
+
+        return calcColorAdaptive(camera,nX, nY,col, row, distance, width, height, 1);
+    }
+
     /**
      * This function renders image's pixel color map from the scene included with
      * the Renderer object
@@ -686,8 +751,11 @@ public class Render {
             threads[i] = new Thread(() -> {
                 Pixel pixel = new Pixel();
                 while (thePixel.nextPixel(pixel)) {
-                    List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, pixel.col, pixel.row, dist, width, height);
-                    _imageWriter.writePixel(pixel.col, pixel.row, calcColor(rays).getColor());
+                    //List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, pixel.col, pixel.row, dist, width, height);
+                    _imageWriter.writePixel(pixel.col, pixel.row,
+                            calcColorAdaptive(camera,nX, nY,pixel.col, pixel.row,
+                                    dist, width, height)
+                                    .getColor());
                 }
             });
         }

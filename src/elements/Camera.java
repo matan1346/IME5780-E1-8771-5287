@@ -7,6 +7,7 @@ import primitives.*;
 import renderer.Render;
 
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static primitives.Util.isZero;
 
@@ -85,6 +86,9 @@ public class Camera {
         }
 
 
+
+
+
     /**
      * Gets layout of the view plane, with units of width, height and positions
      * @param nX int width per item
@@ -157,8 +161,8 @@ public class Camera {
         rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight));
         for(int t = 0; SUPER_SAMPLING_ACTIVE && t < SUPER_SAMPLING_SIZE_RAYS; t++){
             rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight,Ry, Rx,
-                    rand.nextDouble() + rand.nextInt((int)Ry <= 0 ? 1 : (int)Ry),
-                    rand.nextDouble() + rand.nextInt((int)Rx <= 0 ? 1 : (int)Rx)));
+                    ThreadLocalRandom.current().nextDouble(0, Ry),
+                    ThreadLocalRandom.current().nextDouble(0, Rx)));
         }
         return rayList;
     }
