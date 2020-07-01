@@ -4,11 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import primitives.*;
-import renderer.Render;
-
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-
 import static primitives.Util.isZero;
 
 /**
@@ -34,14 +31,6 @@ public class Camera {
      * Vector the right vector of the camera
      */
     private Vector _Vright;
-
-
-    //Super sampling
-    private boolean     SUPER_SAMPLING_ACTIVE = false;
-    private int         SUPER_SAMPLING_SIZE_RAYS = 50;
-
-
-    private Random rand = new Random();
 
     /**
      * Constructor that gets a point, and 2 vectors of to and up and sets them
@@ -84,10 +73,6 @@ public class Camera {
                 ((String)attributes.get("Vto")).split("\\s+"),
                 ((String)attributes.get("Vup")).split("\\s+"));
         }
-
-
-
-
 
     /**
      * Gets layout of the view plane, with units of width, height and positions
@@ -141,7 +126,7 @@ public class Camera {
     }
 
     /**
-     * Gets a random layout of the view plane, with units of width, height and positions
+     * Gets a random layout of the view plane, with units of width, height and positions - super sampling
      * @param nX int width per item
      * @param nY int height per item
      * @param j int the position of the column
@@ -149,17 +134,18 @@ public class Camera {
      * @param screenDistance double screen distance
      * @param screenWidth double screen width
      * @param screenHeight double screen height
+     * @param num_of_rays int num of rays to send for super sampling
      * @return Ray the construct random ray in the position i,j with this view plane
      */
     public List<Ray> constructRaysThroughPixel (int nX, int nY,
                                                 int j, int i, double screenDistance,
-                                                double screenWidth, double screenHeight)//,double Ry, double Rx, double calcRy, double calcRx)
+                                                double screenWidth, double screenHeight, int num_of_rays)//,double Ry, double Rx, double calcRy, double calcRx)
     {
         List<Ray> rayList = new LinkedList<Ray>();
         double Rx = screenWidth / nX;
         double Ry = screenHeight / nY;
         rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight));
-        for(int t = 0; SUPER_SAMPLING_ACTIVE && t < SUPER_SAMPLING_SIZE_RAYS; t++){
+        for(int t = 0; t < num_of_rays; t++){
             rayList.add(constructRayThroughPixel(nX, nY,j,i,screenDistance,screenWidth,screenHeight,Ry, Rx,
                     ThreadLocalRandom.current().nextDouble(0, Ry),
                     ThreadLocalRandom.current().nextDouble(0, Rx)));
@@ -202,39 +188,5 @@ public class Camera {
         return _Vright;
     }
 
-    /**
-     * Getter that return if super sampling is active or not
-     * @return boolean active or not
-     */
-    public boolean getSuperSamplingActive() {
-        return SUPER_SAMPLING_ACTIVE;
-    }
 
-    /**
-     * Getter that return the size of rays in super sampling
-     * @return int num of rays
-     */
-    public int getSuperSamplingSizeRays() {
-        return SUPER_SAMPLING_SIZE_RAYS;
-    }
-
-    /**
-     * Setter for super sampling system active or not
-     * @param active boolean true/false
-     * @return Camera this object
-     */
-    public Camera setSuperSamplingActive(boolean active) {
-        this.SUPER_SAMPLING_ACTIVE = active;
-        return this;
-    }
-
-    /**
-     * Setter for size of rays to generate for the super sampling feature
-     * @param size_rays int size of rays to generate
-     * @return Camera this object
-     */
-    public Camera setSuperSamplingSizeRays(int size_rays) {
-        this.SUPER_SAMPLING_SIZE_RAYS = size_rays;
-        return this;
-    }
 }

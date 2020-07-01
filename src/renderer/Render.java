@@ -1,20 +1,13 @@
 package renderer;
 
 import geometries.Intersectable.GeoPoint;
-
 import elements.*;
-import geometries.*;
 import primitives.*;
-
 import scene.Scene;
-
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
@@ -22,29 +15,28 @@ import static primitives.Util.isZero;
  * Render class that set the scene and the image writer and rendering
  */
 public class Render {
-
     /**
-     * delta value
-     */
-    //private static final double DELTA = 0.1;
-
-    /**
-     * Stopping condition of shkifut
+     * Stopping condition of refraction
      */
     private static final int MAX_CALC_COLOR_LEVEL = 10;
 
     /**
-     * Stopping condition of eshtakfut
+     * Stopping condition of reflection
      */
     private static final double MIN_CALC_COLOR_K = 0.001;
 
+    //Super sampling            - Mini Project 1
+    private boolean     SUPER_SAMPLING_ACTIVE = false; // active or not
+    private int         SUPER_SAMPLING_SIZE_RAYS = 50; // num of rays
 
+    //Soft shadow               - Mini Project 1
+    private boolean     SOFT_SHADOW_ACTIVE = false; // active or not
+    private double      SOFT_SHADOW_RADIUS = 0.1; // radius value
+    private int         SOFT_SHADOW_SIZE_RAYS = 300; //num of rays
 
-    //Soft shadow
-    private boolean     SOFT_SHADOW_ACTIVE = false;
-    private double      SOFT_SHADOW_RADIUS = 0.1;
-    private int         SOFT_SHADOW_SIZE_RAYS = 300;
-
+    //Adaptive Super sampling   - Mini Project 2
+    private boolean     ADAPTIVE_SUPER_SAMPLING_ACTIVE = false; //active or not
+    private int         ADAPTIVE_SUPER_SAMPLING_SIZE_RAYS = 50; // num of rays
 
     /**
      * ImageWrite object that represents the image
@@ -58,7 +50,6 @@ public class Render {
 
     /**
      * Constructor that gets imageWriter and a scene, and sets them
-     *
      * @param imageWriter ImageWriter image writer object
      * @param scene       Scene scene object
      */
@@ -67,53 +58,25 @@ public class Render {
         this._scene = scene;
     }
 
-
-    /*private Color calcColorWithRays(Camera camera, int nX, int nY, int i, int j, double screenDistance, double screenWidth, double screenHeight,
-                                    java.awt.Color background){
-        int count_rays = SUPER_SAMPLING_SIZE_RAYS;//numbers of rays per pixel צריך להוסיףף אותו לזימון של הפונקציה כדי שיוכלו לשנות מייד דרך הטסט
-        Color tempColor = Color.BLACK;
-        List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, j, i,
-                screenDistance, screenWidth, screenHeight);
-
-        for(Ray ray : rays){
-            GeoPoint closestPoint = findClosestIntersection(ray);
-            if(closestPoint == null )
-            {
-                _imageWriter.writePixel(j, i, background);
-                count_rays--;
-                continue;
-            }
-            tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
-        }
-        return (count_rays <= 1 || !SUPER_SAMPLING_ACTIVE) ? tempColor : tempColor.reduce(count_rays);
-    }*/
-
-
+    /**
+     * Setter for super sampling system active or not
+     * @param active boolean true/false
+     * @return Render this object
+     */
+    public Render setSuperSamplingActive(boolean active) {
+        this.SUPER_SAMPLING_ACTIVE = active;
+        return this;
+    }
 
     /**
-     * This method is making image with the camera and image, and renders it
+     * Setter for size of rays to generate for the super sampling feature
+     * @param size_rays int size of rays to generate
+     * @return Render this object
      */
-    /*public void renderImage() {
-        double sumColorR, sumColorG, sumColorB;// sum rgb colors to do averages
-        double colorR, colorG, colorB; //rgb colors
-
-        Camera camera = _scene.getCamera();
-        double screenDistance = _scene.getDistance();
-        double screenWidth = _imageWriter.getWidth();
-        double screenHeight = _imageWriter.getHeight();
-        Intersectable geometries = _scene.getGeometries();
-        java.awt.Color background = _scene.getBackground().getColor();
-        int nX = _imageWriter.getNx();
-        int nY = _imageWriter.getNy();
-
-        for (int j = 0; j < nY; j++) {
-            for (int i = 0; i < nX; i++) {
-                _imageWriter.writePixel(j, i, calcColorWithRays(camera, nX,  nY,  i,  j,  screenDistance,  screenWidth, screenHeight, background).getColor());
-            }
-        }
-    }*/
-
-
+    public Render setSuperSamplingSizeRays(int size_rays) {
+        this.SUPER_SAMPLING_SIZE_RAYS = size_rays;
+        return this;
+    }
 
     /**
      * Setter for soft shadow system - active or not
@@ -145,18 +108,39 @@ public class Render {
         return this;
     }
 
+    /**
+     * Getter that return if adaptive super sampling is active or not
+     * @return boolean active or not
+     */
 
+    /**
+     * Setter for adaptive super sampling system active or not
+     * @param active boolean true/false
+     * @return Render this object
+     */
+    public Render setAdaptiveSuperSamplingActive(boolean active) {
+        this.ADAPTIVE_SUPER_SAMPLING_ACTIVE = active;
+        return this;
+    }
+
+    /**
+     * Setter for size of rays to generate for the adaptive super sampling feature
+     * @param size_rays int size of rays to generate
+     * @return Render this object
+     */
+    public Render setAdaptiveSuperSamplingSizeRays(int size_rays) {
+        this.ADAPTIVE_SUPER_SAMPLING_SIZE_RAYS = size_rays;
+        return this;
+    }
 
     /**
      * Find intersections of a ray with the scene geometries and get the
      * intersection point that is closest to the ray head. If there are no
      * intersections, null will be returned.
-     *
      * @param ray intersecting the scene
      * @return the closest point
      */
     private GeoPoint findClosestIntersection(Ray ray) {
-
         if (ray == null) {
             return null;
         }
@@ -188,10 +172,12 @@ public class Render {
      */
     private GeoPoint getClosestPoint(List<GeoPoint> intersectionPoints) {
         GeoPoint result = null;
-        double mindist = Double.MAX_VALUE;
+        double mindist = Double.MAX_VALUE; // double max value
 
+        //Point of camera
         Point3D p0 = this._scene.getCamera().getP0();
 
+        //get the Point with the minimum distance to the camera point - closest
         for (GeoPoint geo : intersectionPoints) {
             Point3D pt = geo.getPoint();
             double distance = p0.distance(pt);
@@ -229,20 +215,28 @@ public class Render {
     }
 
 
+    /**
+     * Calculate the average color of the rays
+     * @param rays List<Ray> list of rays to calculate the average color
+     * @return Color average color
+     */
     private Color calcColor(List<Ray> rays)
     {
         int size_rays = rays.size();
-        Color tempColor = new Color(0,0,0);
+        Color tempColor = new Color(0,0,0); // color to add
         for(Ray ray : rays){
             GeoPoint closestPoint = findClosestIntersection(ray);
+            //if closest point not exists - than continue with next ray
             if(closestPoint == null )
             {
                 size_rays--;
                 continue;
             }
+            //Add color
             tempColor = tempColor.add(new Color(calcColor(closestPoint, ray).getColor()));
         }
-        return (size_rays <= 1 || !_scene.getCamera().getSuperSamplingActive()) ? tempColor : tempColor.reduce(size_rays);
+        //if size is lower or equal to 1 - return old color, otherwise return average color
+        return (size_rays <= 1 || !SUPER_SAMPLING_ACTIVE) ? tempColor : tempColor.reduce(size_rays);
     }
 
     /**
@@ -326,41 +320,11 @@ public class Render {
         return result;
     }
 
-
-    /*public Color calcColor(GeoPoint gp) {
-        Color result = _scene.getAmbientLight().getIntensity();
-        result = result.add(gp.getGeometry().getEmission());
-        List<LightSource> lights = _scene.getLights();
-
-        Vector v = gp.getPoint().subtract(_scene.getCamera().getP0()).normalize();
-        Vector n = gp.getGeometry().getNormal(gp.getPoint());
-
-        Material material = gp.getGeometry().getMaterial();
-        int nShininess = material.getnShininess();
-        double kd = material.getkD();
-        double ks = material.getkS();
-        if (_scene.getLights() != null) {
-            for (LightSource lightSource : lights) {
-
-                Vector l = lightSource.getL(gp.getPoint());
-                double nl = alignZero(n.dotProduct(l));
-                double nv = alignZero(n.dotProduct(v));
-
-                if (sign(nl) == sign(nv)) {
-                    if (unshaded(l, n, gp, lightSource)) {
-                        Color ip = lightSource.getIntensity(gp.getPoint());
-                        result = result.add(
-                                calcDiffusive(kd, nl, ip),
-                                calcSpecular(ks, l, n, nl, v, nShininess, ip)
-                        );
-                    }
-                }
-            }
-        }
-
-        return result;
-    }*/
-
+    /**
+     * Check if the number has a sign + or not
+     * @param val double value number
+     * @return boolean true if has + sign, false otherwise
+     */
     private boolean sign(double val) {
         return (val > 0d);
     }
@@ -413,7 +377,6 @@ public class Render {
         return ip.scale(nl * kd);
     }
 
-
     /**
      * Check if given vectors with geo point is unshaded
      *
@@ -436,15 +399,13 @@ public class Render {
                 geoP.getGeometry().getMaterial().getKT() == 0) return false;
 
         }
-
         return true;
-
     }
 
     /**
      * Calculate the shadow of the geometry by list of rays
-     * @param l Vector
-     * @param n Vector
+     * @param l Vector light source vector
+     * @param n Vector normalized vector of the geo point
      * @param gp GeoPoint the geometry point of the transparency
      * @param lightSource LightSource object
      * @return
@@ -482,11 +443,11 @@ public class Render {
     }
 
     /**
-     *
-     * @param l
-     * @param n
-     * @param gp
-     * @param lightSource
+     * return a list of rays that belongs to the shadow
+     * @param l Vector from lightsource to the geometry
+     * @param n Vector normalized vector of the geo point
+     * @param gp the geometry point of the transparency
+     * @param lightSource LightSource object
      * @return
      */
     private List<Ray> transparencyGetListOfRay(Vector l, Vector n, GeoPoint gp, LightSource lightSource) {
@@ -543,9 +504,9 @@ public class Render {
     /**
      * this function gets a point, a ray and a vector and return the reflected ray
      *
-     * @param p   Point3D point
-     * @param ray Ray Ray
-     * @param n   Vector vector
+     * @param p Point3D point start point of the vector
+     * @param ray Ray Ray for the direction of the ray
+     * @param n Vector vector normalized vector
      * @return Ray reflected ray
      */
     private Ray constructReflectedRay(Point3D p, Ray ray, Vector n) {
@@ -561,7 +522,6 @@ public class Render {
 
     /**
      * this function gets a point and a ray and return the refracted ray
-     *
      * @param p     Point3D point
      * @param inRay Ray ray
      * @return Ray the refracted ray
@@ -666,70 +626,170 @@ public class Render {
         }
     }
 
+    /**
+     * Calculate the color of adaptive super sampling using slices into 4 quarters
+     * @param nX number of pixel in axis x
+     * @param nY number of pixel in axis y
+     * @param j location of current pixel in the row
+     * @param i location of current pixel in the column
+     * @param screenDistance the distance between the camera and view plane
+     * @param screenWidth the width plane in cm
+     * @param screenHeight the height plane in cm
+     * @param numOfRays max rays we can create from one pixel
+     * @return Color color value
+     */
+    public Color calcColorAdaptive(int nX, int nY, int j, int i, double screenDistance, double screenWidth, double screenHeight, int numOfRays) {
+        Camera camera = _scene.getCamera();
+        Vector Vright = camera.getVright();
+        Vector Vup = camera.getVup();
+        //start point in camera
+        Point3D cameraLoc = camera.getP0();
+        int numOfRaysInRowCol = (int)Math.ceil(Math.sqrt(numOfRays));
+        //if the max ray == 1, call to constructRayThroughPixel that received one ray, and send this ray to calcolor
+        if(numOfRaysInRowCol == 1)
+            return calcColor(camera.constructRayThroughPixel(nX, nY, j, i, screenDistance, screenWidth,screenHeight));
+        Point3D Pc;
+        //we want point of center pixel in the view plane
+        if (screenDistance != 0)
+            Pc = cameraLoc.add(camera.getVto().scale(screenDistance));
+        else
+            Pc = cameraLoc;
+        Point3D Pij = Pc;
+        //the length of the height for ont pixel
+        double Ry = screenHeight/nY;
+        //the length of the width for ont pixel
+        double Rx = screenWidth/nX;
 
-    private Color calcColorAdaptiveRays(List<Ray> rays)
+        double Yi= (i - (nY/2d))*Ry + Ry/2d;
+        double Xj= (j - (nX/2d))*Rx + Rx/2d;
+
+        if(Xj != 0) Pij = Pij.add(Vright.scale(Xj)) ;
+        if(Yi != 0) Pij = Pij.add(Vup.scale(-Yi));
+
+        double minRy = Ry/numOfRaysInRowCol;
+        double minRx = Rx/numOfRaysInRowCol;
+        return calcColorAdaptiveRec(Pij, Rx, Ry, minRx, minRy,cameraLoc,Vright, Vup);
+    }
+
+    /**
+     * Calculate the color of adaptive super sampling using slices into 4 quarters
+     * @param nX number of pixel in axis x
+     * @param nY number of pixel in axis y
+     * @param j location of current pixel in the row
+     * @param i location of current pixel in the column
+     * @param screenDistance the distance between the camera and view plane
+     * @param screenWidth the width plane in cm
+     * @param screenHeight the height plane in cm
+     * @return the pixel color
+     */
+    public Color calcColorAdaptive(int nX, int nY, int j, int i, double screenDistance, double screenWidth, double screenHeight) {
+        return calcColorAdaptive(nX, nY, j,i,screenDistance,screenWidth,screenHeight, 80);
+    }
+
+
+
+    /**
+     *
+     * @param centerP the point in (j,i), the center point in the pixel
+     * @param Width the width of pixel
+     * @param Height the height of pixel
+     * @param minWidth the min pixel width, when width < min width we need to stop the recursion
+     * @param minHeight the min pixel height, when width < min height we need to stop the recursion
+     * @param cameraLoc the camera point
+     * @param Vright vector v- right
+     * @param Vup vector v- up
+     * @return the "tat" pixel color
+     */
+    private Color calcColorAdaptiveRec(Point3D centerP, double Width, double Height, double minWidth, double minHeight, Point3D cameraLoc,Vector Vright,Vector Vup)  {
+        //4 point "קצוות" of the pixel quarters
+        Point3D corner1 = centerP.add(Vright.scale(Width / 2)).add(Vup.scale(-Height / 2)),//top right  corner
+                corner2 = centerP.add(Vright.scale(Width / 2)).add(Vup.scale(Height / 2)), //bottom right corner
+                corner3 = centerP.add(Vright.scale(-Width / 2)).add(Vup.scale(-Height / 2)),//top left corner
+                corner4 = centerP.add(Vright.scale(-Width / 2)).add(Vup.scale(Height / 2)); //bottom left corner
+
+        //create a ray from the camera point, the direction is the vector from the center of quarter to camera point
+        Ray     ray1 = new Ray(cameraLoc, corner1.subtract(cameraLoc)),
+                ray2 = new Ray(cameraLoc, corner2.subtract(cameraLoc)),
+                ray3 = new Ray(cameraLoc, corner3.subtract(cameraLoc)),
+                ray4 = new Ray(cameraLoc, corner4.subtract(cameraLoc));
+
+        //calculate the color of all the ray
+        Color color1 = calcColor(ray1),
+                color2 = calcColor(ray2),
+                color3 = calcColor(ray3),
+                color4 = calcColor(ray4);
+
+        //Calculate the average of the color
+        Color averageColor = color1.add(color2, color3, color4).reduce(4);
+
+        //checks the Recursion stop conditions, if the recursion is to be stopped we will return an average of the colors
+        if(Width <= minWidth || Height <= minHeight)
+            return averageColor;
+
+        //Checks if the 4 rays on the edge have a same color. if the answer is true- we will return an average of the colors
+        //Why don't we return one of the colors? that is our secret
+        if (color1.equals(color2)&& color1.equals(color3)&& color1.equals(color4))
+            return averageColor;
+
+        //if the color of rays are not same- we calculate the center quarters point
+        Point3D centerP1 = centerP.add(Vright.scale(Width / 4)).add(Vup.scale(-Height / 4)),
+                centerP2 = centerP.add(Vright.scale(Width / 4)).add(Vup.scale(Height / 4)),
+                centerP3 = centerP.add(Vright.scale(-Width / 4)).add(Vup.scale(-Height / 4)),
+                centerP4 = centerP.add(Vright.scale(-Width / 4)).add(Vup.scale(Height / 4));
+
+
+
+        //Recursive call 4 all 4 quarters to calculate the average of all of them and return the averaged color
+        return calcColorAdaptiveRec(centerP1, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup).add(
+                calcColorAdaptiveRec(centerP2, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup),
+                calcColorAdaptiveRec(centerP3, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup),
+                calcColorAdaptiveRec(centerP4, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup)
+        ).reduce(4);
+    }
+
+    /**
+     * Calculate the color of a ray
+     * @param ray Ray to calculate the color from
+     * @return Color color value
+     */
+    private Color calcColor(Ray ray)  {
+        GeoPoint gp;
+        gp = findClosestIntersection(ray);
+        if(gp == null) // if geo point not exists - than return background color
+            return this._scene.getBackground();
+        else
+            return calcColor(gp, ray);
+    }
+
+
+    /**
+     * This function return color by selected mode ADAPTIVE SAMPLING/SUPER SAMPLING/ REGULAR MODE
+     * @param camera Camera camera object
+     * @param nX int num of pixels of width
+     * @param nY int num of pixels of height
+     * @param col int column value
+     * @param row int row value
+     * @param distance double distance of camera
+     * @param width double width of view plane
+     * @param height double height of view plane
+     * @return Color the color value withing the targeted mode
+     */
+    private Color getColorByMode(Camera camera,int nX, int nY, int col, int row, double distance, double width, double height)
     {
-        Color tempColor;
-        Color oldColor = new Color(0,0,0);
-        boolean savedColor = false;
-        for(Ray ray : rays){
-            GeoPoint closestPoint = findClosestIntersection(ray);
-            if(closestPoint == null )
-                continue;
-
-            tempColor = new Color(calcColor(closestPoint, ray).getColor());
-            if(savedColor && !tempColor.equals(oldColor))
-                return null;
-            else
-                oldColor = new Color(tempColor);
-            savedColor = true;
+        //Calculate color value with adaptive super sampling system
+        if(ADAPTIVE_SUPER_SAMPLING_ACTIVE)
+        {
+            return calcColorAdaptive(nX, nY,col, row,
+                    distance, width, height);
         }
-        return oldColor;
-    }
-
-    private Color calcColorAdaptive(Camera camera,int nX,int nY,int col,int row,double distance,
-                                   double width, double height, int recursion)
-    {
-        List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, col, row, distance, width, height);
-        Color color = calcColorAdaptiveRays(rays);
-
-        if(color == null && recursion > 0) {
-            double Rx = width / nX;
-            double Ry = height / nY;
-            int numPixel = 2;
-            recursion--;
-
-
-            int count = 0;
-            Color tempColor = new Color(0,0,0);
-            Color currColor;
-            for(int i =0;i < numPixel;i++ )
-                for(int j = 0;j < numPixel;j++)
-                {
-                    currColor = calcColorAdaptive(camera, numPixel, numPixel, j, i,
-                            distance, Rx, Ry, recursion);
-                    if(currColor != null)
-                    {
-                        tempColor = tempColor.add(currColor);
-                        count++;
-                    }
-                }
-
-            if(count > 0)
-                System.out.println("How much? - " + count);
-
-
-            color = (count > 0) ? tempColor.reduce(count) : new Color(_scene.getBackground().getColor());
+        else//Calculate color value with super sampling or regular system
+        {
+            List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, col, row, distance, width, height,
+                    SUPER_SAMPLING_ACTIVE ? SUPER_SAMPLING_SIZE_RAYS : 0);
+            return calcColor(rays);
         }
-        return color;
     }
 
-    public Color calcColorAdaptive(Camera camera,int nX,int nY,int col,int row,double distance,
-        double width, double height)
-    {
-
-        return calcColorAdaptive(camera,nX, nY,col, row, distance, width, height, 1);
-    }
 
     /**
      * This function renders image's pixel color map from the scene included with
@@ -751,11 +811,10 @@ public class Render {
             threads[i] = new Thread(() -> {
                 Pixel pixel = new Pixel();
                 while (thePixel.nextPixel(pixel)) {
-                    //List<Ray> rays = camera.constructRaysThroughPixel(nX, nY, pixel.col, pixel.row, dist, width, height);
-                    _imageWriter.writePixel(pixel.col, pixel.row,
-                            calcColorAdaptive(camera,nX, nY,pixel.col, pixel.row,
-                                    dist, width, height)
-                                    .getColor());
+                     _imageWriter.writePixel(pixel.col, pixel.row,
+                            getColorByMode(camera, nX, nY,pixel.col, pixel.row,
+                                    dist, width, height).getColor()
+                                    );
                 }
             });
         }
@@ -799,5 +858,4 @@ public class Render {
         _print = true;
         return this;
     }
-
 }

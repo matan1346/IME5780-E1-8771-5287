@@ -163,8 +163,8 @@ public class MiniProject1Test {
         Render render = new Render(imageWriter, scene);
 
 
-        scene.getCamera().setSuperSamplingActive(true).setSuperSamplingSizeRays(50);
-        render.setSoftShadowActive(true).setSoftShadowRadius(1).setSoftShadowSizeRays(50).setMultithreading(3) //
+        render.setSuperSamplingActive(true).setSuperSamplingSizeRays(50)
+                .setSoftShadowActive(true).setSoftShadowRadius(1).setSoftShadowSizeRays(50).setMultithreading(3) //
                 .setDebugPrint();
 
         render.renderImage();
